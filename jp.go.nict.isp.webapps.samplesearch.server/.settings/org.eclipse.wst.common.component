@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="jp.go.nict.isp.webapps.ikkyu.worker">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="jp.go.nict.isp.wisdom2013.api.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jp.go.nict.isp.wisdom2013.api/jp.go.nict.isp.wisdom2013.api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="saaj.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/ws/saaj.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="org.springframework.beans-3.0.6.RELEASE.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.beans-3.0.6.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="wsdl4j-1.5.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/ws/wsdl4j-1.5.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.cosee.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.cosee.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-discovery-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-discovery-0.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.commons.ws.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.ws.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-codec-1.3.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-codec-1.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.commons.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.client.soap.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.soap.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="axis.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/axis/axis.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mail.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/axis/mail.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.commons.cs.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.cs.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="org.springframework.expression-3.0.6.RELEASE.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.expression-3.0.6.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.servicecontainer.handler.protobufrpc.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.handler.protobufrpc.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.client.ws_1_2.protobuf.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.ws_1_2.protobuf.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="protobuf-java-2.2.0.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/google/protobuf-java-2.2.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="org.springframework.context-3.0.6.RELEASE.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.context-3.0.6.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="oscache-2.4.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/opensymphony/oscache-2.4.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="org.springframework.asm-3.0.6.RELEASE.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.asm-3.0.6.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.commons.ws.axis.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.ws.axis.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-beanutils.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-beanutils.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.commons.protobufrpc.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.protobufrpc.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-lang-2.4.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-lang-2.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jaxrpc.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/ws/jaxrpc.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-logging-1.0.4.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-logging-1.0.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.commons.beanutils.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.beanutils.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.servicecontainer.handler.axis.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.handler.axis.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.service.language_1_2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.service.language_1_2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.language.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.language.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.client.ws_1_2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.ws_1_2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="org.springframework.core-3.0.6.RELEASE.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.core-3.0.6.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="activation.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/axis/activation.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-lang3-3.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-lang3-3.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-io-1.2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-io-1.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="org.springframework.context.support-3.0.6.RELEASE.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.context.support-3.0.6.RELEASE.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.client.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.servicecontainer.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.cosee.axis.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.cosee.axis.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.servicecontainer.handler.jsonrpc.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.handler.jsonrpc.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="tomcat-juli.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/tomcat6/tomcat-juli.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.langrid.service.common_1_2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.service.common_1_2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.isp.wrapper.contrasearch.server.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jp.go.nict.isp.wrapper.contrasearch.server/jp.go.nict.isp.wrapper.contrasearch.server">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/AnalysisResultSearch/AnalysisResultSearch">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jp.go.nict.isp.wrapper.wisdom.abstractservice/jp.go.nict.isp.wrapper.wisdom.abstractservice">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="java-output-path" value="/jp.go.nict.isp.webapps.ikkyu.worker/build/classes"/>
+        <property name="context-root" value="jp.go.nict.isp.webapps.sentencesearch.server"/>
+    </wb-module>
+</project-modules>

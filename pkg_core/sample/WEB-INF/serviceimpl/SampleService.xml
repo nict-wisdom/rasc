@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="target"
+		class="jp.go.nict.langrid.servicecontainer.handler.TargetServiceFactory">
+		<property name="service">
+			<bean class="jp.go.nict.wisdom.wrapper.StandardInputService">
+				<property name="cmdLine" value="___PATH_TO_PROGRAM___" />
+				<property name="delimiterIn" value="\n" />
+				<property name="delimiterOut" value="EOS\n" />
+			</bean>
+		</property>
+	</bean>
+</beans>

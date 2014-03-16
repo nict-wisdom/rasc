@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="jp.go.nict.isp.wisdom2013.api" default="dist">
+	<import file="../build/lib_common.xml" />
+
+	<fileset id="filesetid.lib" dir="../jp.go.nict.isp.wisdom2013.lib/lib">
+		<include name="commons/commons-beanutils.jar" />
+		<include name="langrid/jp.go.nict.langrid.commons.jar" />
+		<include name="langrid/jp.go.nict.langrid.service.common_1_2.jar" />
+		<include name="langrid/jp.go.nict.langrid.servicecontainer.jar" />
+		<include name="trie4j/trie4j-SNAPSHOT.jar" />
+	</fileset>
+</project>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/msgpack-java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/msgpack-rpc-java"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/google/protobuf-java-2.2.0.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/ws/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.beanutils.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.ws.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.cosee.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.protobufrpc.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.beans-3.0.6.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.core-3.0.6.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/opensymphony/oscache-2.4.1.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.context-3.0.6.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.asm-3.0.6.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/spring/org.springframework.expression-3.0.6.RELEASE.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

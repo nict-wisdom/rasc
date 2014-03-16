@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/slf4j/slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/slf4j/slf4j-jdk14-1.7.5.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-annotations-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-client-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-continuation-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-deploy-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-http-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-io-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-jaas-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-jmx-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-jndi-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-plus-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-proxy-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-rewrite-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-security-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-server-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-servlet-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-servlets-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-util-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-webapp-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/jetty-xml-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/servlet-api-3.0.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/websocket-api-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/websocket-client-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/websocket-common-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/websocket-server-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/jetty9/websocket-servlet-9.0.5.v20130815.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.ws_1_2.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.beanutils.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.ws.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.language.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.service.common_1_2.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/tomcat7/catalina.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/tomcat7/tomcat-coyote.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/tomcat6/tomcat-juli.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

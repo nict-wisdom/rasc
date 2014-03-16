@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="rasc_release" default="war">
+
+  <target name="init">
+    <mkdir dir="build" />
+  </target>
+
+  <target name="clean" depends="init">
+    <delete dir="build"/>
+  </target>
+
+  <target name="wrapper" depends="init">
+    <mkdir dir="build/wrapper" />
+    <javac destdir="build/wrapper" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="jp.go.nict.wisdom.wrapper/src" />
+      <classpath>
+	<fileset dir="lib" includes="*.jar" />
+      </classpath>
+    </javac>
+    <jar jarfile="build/wrapper.jar" >
+      <fileset dir="build/wrapper" includes="**/*.class" />
+      <fileset dir="jp.go.nict.wisdom.wrapper/src" includes="**/*.java" />
+    </jar>
+  </target>
+
+  <target name="war" depends="wrapper">
+    <property name="war_name" value="___WAR_NAME___"/>
+
+    <war destfile="build/${war_name}.war" webxml="webapps/WEB-INF/web.xml">
+      <webinf dir="webapps/WEB-INF" includes="**/*.*" excludes="**/web.xml" />
+      <lib dir="lib" includes="**/*.jar" />
+      <lib dir="build" includes="wrapper.jar" />
+    </war>
+  </target>
+</project>

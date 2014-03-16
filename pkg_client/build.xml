@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="rasc_release" default="package">
+
+	<property name="version" value="1.0.0" />
+	<property name="package_name" value="rasc-client-${version}" />
+
+	<path id="all.wisdom2013">
+		<fileset dir="../jp.go.nict.isp.wisdom2013.lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="init">
+		<mkdir dir="build" />
+	</target>
+
+	<target name="clean" depends="init">
+		<delete dir="build" />
+		<delete dir="dist" />
+	</target>
+
+	<target name="wrapper-api" depends="init">
+		<mkdir dir="build/wrapper-api" />
+		<javac destdir="build/wrapper-api" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.wisdom.wrapper.api/src" />
+			<classpath>
+				<path refid="all.wisdom2013" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/wrapper-api.jar">
+			<fileset dir="build/wrapper-api" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.wisdom.wrapper.api/src" includes="**/*.java" />
+		</jar>
+	</target>
+
+	<target name="package" depends="wrapper-api">
+		<mkdir dir="build" />
+		<mkdir dir="build/jar" />
+
+		<copy todir="build/jar">
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/axis/" includes="**/*.*" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/common/" includes="**/*.*" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/langrid/" includes="**/*.*" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/spring/" includes="**/*.*" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/ws/" includes="**/*.*" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/json/" includes="**/*.*" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/google/" includes="**/*.*" />
+			<file file="build/wrapper-api.jar" />
+		</copy>
+
+		<mkdir dir="dist" />
+		<zip destfile="dist/${package_name}.zip" update="true" preserve0permissions="true">
+			<zipfileset dir="build/jar" prefix="${package_name}/lib" />
+			<zipfileset dir="ClientProtcolBuffers" prefix="${package_name}/ClientProtcolBuffers" />
+		</zip>
+	</target>
+</project>

@@ -1,0 +1,12 @@
+{
+	"serverName" : "TestJetty",
+	"jettyPort" : 8080,
+	"controlPort" : 0,
+	"httpServices" : [
+		{"contextPath":"/test1","serviceName":"IkkyuServer","warPath":"R:/jp.go.nict.isp.webapps.ikkyu.server.war","msgpackPort":9090 },
+		
+	]
+	"msgpackServices" : [
+		{"contextPath":"/test1","serviceName":"IkkyuServer","warPath":"R:/jp.go.nict.isp.webapps.ikkyu.server.war","msgpackPort":9090 }
+	]
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="target"
+		class="jp.go.nict.langrid.servicecontainer.handler.TargetServiceFactory">
+		<property name="service">
+			<bean class="jp.go.nict.isp.wrapper.samplesearch.server.SampleSearchServer">
+			<property name="endpointList">
+				<list>
+					<value>http://172.21.20.76:8080/jp.go.nict.isp.webapps.samplesearch.worker/pbServices/SampleSearchWorker</value>
+					<value>http://172.21.20.77:8080/jp.go.nict.isp.webapps.samplesearch.worker/pbServices/SampleSearchWorker</value>
+					<value>http://172.21.20.78:8080/jp.go.nict.isp.webapps.samplesearch.worker/pbServices/SampleSearchWorker</value>
+				</list>
+			</property>
+				<property name="clientFactory">
+					<!-- <bean class="jp.go.nict.langrid.client.impl.protobuf.PbClientFactory" 
+						/> <bean class="jp.go.nict.langrid.client.msgpackrpc.MsgPackClientFactory" 
+						/> -->
+					<bean class="jp.go.nict.langrid.client.impl.protobuf.PbClientFactory" />
+				</property>
+				<property name="endpointFactory">
+					<bean class="jp.go.nict.isp.wisdom2013.plugin.EndpointFactoryImpl">
+						<property name="jsonfile" value="endpoints.json" />
+						<property name="balancer"
+							value="jp.go.nict.isp.wisdom2013.plugin.RoundrobinBalancerImpl" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+</beans>

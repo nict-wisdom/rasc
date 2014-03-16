@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="wisdom2013_javadoc" default="dist">
+
+	<path id="all.wisdom2013">
+		<fileset dir="../jp.go.nict.isp.wisdom2013.lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="build/jp.go.nict.isp.wisdom2013.api.jar" />
+		<pathelement location="build/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" />
+		<pathelement location="build/jp.go.nict.isp.wisdom2013.plugin.jar" />
+		<pathelement location="build/msgpack-java.jar" />
+		<pathelement location="build/msgpack-rpc-java.jar" />
+		<pathelement location="build/jp.go.nict.langrid.client.msgpackrpc.jar" />
+		<pathelement location="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc.jar" />
+		<pathelement location="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc.jar" />
+	</path>
+
+	<path id="msgpack-java.lib">
+		<fileset dir="../msgpack-java/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<path id="msgpack-rpc-java.lib">
+		<pathelement location="../msgpack-rpc-java/lib/slf4j-jdk14-1.5.8.jar" />
+		<pathelement location="../msgpack-rpc-java/lib/log4j-1.2.15.jar" />
+		<pathelement location="../msgpack-rpc-java/lib/netty-3.6.6.Final.jar" />
+		<pathelement location="../msgpack-rpc-java/lib/slf4j-api-1.5.8.jar" />
+	</path>
+
+	<target name="init">
+		<mkdir dir="javadoc" />
+		<mkdir dir="build" />
+	</target>
+
+	<target name="msgpack-java" depends="init">
+		<mkdir dir="build/msgpack-java" />
+		<javac destdir="build/msgpack-java" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../msgpack-java/src/main" />
+			<classpath>
+				<path refid="msgpack-java.lib" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/msgpack-java.jar">
+			<fileset dir="build/msgpack-java" includes="**/*.class" />
+			<fileset dir="../msgpack-java/src/main" includes="**/*.java" />
+			<fileset dir="../msgpack-java/" includes="*.*" />
+		</jar>
+	</target>
+
+	<target name="msgpack-rpc-java" depends="msgpack-java">
+		<mkdir dir="build/msgpack-rpc-java" />
+		<javac destdir="build/msgpack-rpc-java" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../msgpack-rpc-java/src/main" />
+			<classpath>
+				<path refid="msgpack-java.lib" />
+				<path refid="msgpack-rpc-java.lib" />
+				<pathelement location="build/msgpack-java.jar" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/msgpack-rpc-java.jar">
+			<fileset dir="build/msgpack-rpc-java" includes="**/*.class" />
+			<fileset dir="../msgpack-rpc-java/src/main" includes="**/*.java" />
+			<fileset dir="../msgpack-rpc-java/" includes="*.*" />
+		</jar>
+	</target>
+	
+	<path id="src.javadoc">
+		<pathelement location="../jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc/src"/>
+		<pathelement location="../jp.go.nict.isp.wisdom2013.api/src"/>
+		<pathelement location="../jp.go.nict.isp.wisdom2013.plugin/src"/>
+		<pathelement location="../jp.go.nict.isp.wrapper.samplesearch.server/src"/>
+		<pathelement location="../jp.go.nict.isp.wrapper.samplesearch.worker/src"/>
+		<pathelement location="../jp.go.nict.isp.wrapper.wisdom.abstractservice/src"/>
+		<pathelement location="../jp.go.nict.langrid.client.msgpackrpc/src"/>
+		<pathelement location="../jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src"/>
+		<pathelement location="../jp.go.nict.langrid.servicecontainer.msgpackrpc.util/src"/>
+		<pathelement location="../jp.go.nict.langrid.webapps.jetty.embedded/src"/>
+		<pathelement location="../jp.go.nict.wisdom.wrapper/src"/>
+		<pathelement location="../jp.go.nict.wisdom.wrapper.api/src"/>
+		<pathelement location="../jp.go.nict.ial.servicecontainer.fluentd/src"/>
+		<pathelement location="../jp.go.nict.ial.webapps.wisdom.proxy/src"/>
+	</path>
+
+	<target name="javadoc" depends="msgpack-rpc-java">
+		<mkdir dir="javadoc/api" />
+		<javadoc packagenames="*" destdir="javadoc/api" sourcepathref="src.javadoc" encoding="UTF-8" charset="UTF-8" windowtitle="RaSC API JavaDoc." 
+		    Author="No" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7"
+		    splitindex="true" use="true" version="true" additionalparam="${javadoc.arg}" locale="en_US">
+			<classpath>
+				<path refid="all.wisdom2013" />
+				<path refid="msgpack-java.lib" />
+				<path refid="msgpack-rpc-java.lib" />
+			</classpath>
+		    <doctitle><![CDATA[<h1>RaSC (Rapid Service Connector)</h1>このドキュメントは、RaSCのAPI仕様を記載しています。]]></doctitle>
+<!--
+		    <bottom><![CDATA[<br><b>Copyright (C) 2014 Information Analysis Laboratory, NICT.</b>]]></bottom>
+-->
+		    <bottom><![CDATA[<b>Copyright (C) 2014 Information Analysis Laboratory, NICT</b><br><br>RaSC is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or (at your option) any later version.<br>RaSC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.<br>You should have received a copy of the GNU Lesser General Public License along with this program. If not, see (http://www.gnu.org/licenses/) .<br>]]></bottom>
+			<excludepackage name="jp.go.nict.ial.mock" /> 
+			<excludepackage name="jp.go.nict.ial.servicecontainer.handler.websocketjson.old" /> 
+			<excludepackage name="jp.go.nict.isp.wisdom2013.api.endpoint" /> 
+		    
+<!--
+			<package name="jp.go.nict.ial.client.wsjsonrpc.*" />
+			<package name="jp.go.nict.ial.servicecontainer.handler.msgpackrpc.*" />
+			<package name="jp.go.nict.ial.servicecontainer.handler.websocketjson" />
+			<package name="jp.go.nict.ial.servicecontainer.msgpackrpc.util.*" />
+			<package name="jp.go.nict.ial.webapps.wisdom.proxy.*" />
+			<package name="jp.go.nict.ial.websocket.*" />
+			<package name="jp.go.nict.ial.websocket.servlet.*" />
+			<package name="jp.go.nict.isp.wisdom2013.api.balancer.*" />
+			<package name="jp.go.nict.isp.wisdom2013.api.endpoint.*" />
+			<package name="jp.go.nict.isp.wisdom2013.api.filter.*" />
+			<package name="jp.go.nict.isp.wisdom2013.api.samplesearch.*" />
+			<package name="jp.go.nict.isp.wisdom2013.api.util.*" />
+			<package name="jp.go.nict.isp.wisdom2013.plugin.*" />
+			<package name="jp.go.nict.isp.wrapper.samplesearch.server.*" />
+			<package name="jp.go.nict.isp.wrapper.samplesearch.worker.*" />
+			<package name="jp.go.nict.isp.wrapper.wisdom.abstractservice.*" />
+			<package name="jp.go.nict.langrid.client.msgpackrpc.*" />
+			<package name="jp.go.nict.langrid.webapps.jetty.embedded.*" />
+			<package name="jp.go.nict.wisdom.daemonizer.command.*" />
+			<package name="jp.go.nict.wisdom.wrapper.*" />
+			<package name="jp.go.nict.wisdom.wrapper.api.*" />
+			<package name="jp.go.nict.wisdom.wrapper.status.*" />
+			<package name="jp.go.nict.ial.servicecontainer.fluentd.*" />
+-->
+			<link href="http://download.oracle.com/javase/7/docs/api/"/>
+			<link href="http://docs.oracle.com/javase/jp/7/api/"/>
+			<link href="http://langrid.org/developer/repo/java_apidocs_jp/"/>
+			<link href="http://download.eclipse.org/jetty/stable-9/apidocs/"/>
+			<link href="http://msgpack.org/javadoc/current/"/>
+			<link href="http://msgpack.org/rpc/javadoc/current/"/>
+			<link href="http://tomcat.apache.org/tomcat-7.0-doc/api/"/>
+			<link href="http://tomcat.apache.org/tomcat-7.0-doc/servletapi/"/>
+		</javadoc>
+	</target>
+
+	<target name="dist" depends="javadoc">
+	</target>
+
+	<target name="clean">
+		<delete dir="build" />
+		<delete dir="javadoc" />
+	</target>
+
+</project>

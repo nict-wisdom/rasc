@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="target"
+		class="jp.go.nict.ial.webapps.wisdom.proxy.ProxyTargetServiceFactory">
+
+		<!-- Proxyで実装するInterfaceを記載  -->
+		<property name="interfaceClasses">
+			<list>
+			</list>
+		</property>
+
+		<property name="service">
+			<bean class="jp.go.nict.ial.webapps.wisdom.proxy.ProxyService">
+				<property name="clientFactory">
+					<!--
+						<bean class="jp.go.nict.langrid.client.jsonrpc.JsonRpcClientFactory" />
+						<bean class="jp.go.nict.langrid.client.impl.protobuf.PbClientFactory"/>
+						<bean class="jp.go.nict.langrid.client.msgpackrpc.MsgPackClientFactory"/>
+					-->
+					<bean class="jp.go.nict.langrid.client.jsonrpc.JsonRpcClientFactory" />
+				</property>
+				<property name="endpointFactory">
+					<bean class="jp.go.nict.isp.wisdom2013.plugin.EndpointFactoryImpl">
+						<property name="jsonfile" value="endpoints.json" />
+						<property name="balancer"
+							value="jp.go.nict.isp.wisdom2013.plugin.RoundrobinBalancerImpl" />
+					</bean>
+				</property>
+
+				<!-- interfaceClasses と URIのマッピングを記載、但し、ClientFactoryによって異なるのでこちらも更新すること -->
+				<property name="serviceMapping" value="jp.go.isp.webapps.ikkyu.server/jsonServices/IkkyuServer" />
+				<property name="msgpackPort" value="9001" />
+			</bean>
+		</property>
+	</bean>
+</beans>

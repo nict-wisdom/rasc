@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="rasc_client_pb" default="client">
+
+  <target name="init">
+    <mkdir dir="build" />
+  </target>
+
+  <target name="clean" depends="init">
+    <delete dir="build" />
+  </target>
+
+  <target name="client" depends="init">
+    <mkdir dir="build/client" />
+    <javac destdir="build/client" encoding="UTF-8"
+      includeantruntime="false" debug="true">
+      <src path="./src" />
+      <classpath>
+        <fileset dir="../lib" includes="*.jar" />
+      </classpath>
+    </javac>
+    <jar jarfile="build/clientProtocolBuffers.jar">
+      <fileset dir="build/client" includes="**/*.class" />
+      <fileset dir="./src" includes="**/*.java" />
+      <manifest>
+        <attribute name="Main-Class" value="ClientProtcolBuffers" />
+        <attribute name="Class-Path"
+          value=". ../../lib/jp.go.nict.langrid.client.ws_1_2.protobuf.jar
+          ../../lib/wrapper-api.jar ../../lib/jp.go.nict.langrid.client.jar
+          ../../lib/protobuf-java-2.2.0.jar ../../lib/jp.go.nict.langrid.commons.jar
+          ../../lib/jp.go.nict.langrid.commons.cs.jar ../../lib/jp.go.nict.langrid.commons.protobufrpc.jar
+          ../../lib/jp.go.nict.langrid.commons.beanutils.jar ../../lib/jp.go.nict.langrid.language.jar" />
+      </manifest>
+    </jar>
+  </target>
+</project>
+

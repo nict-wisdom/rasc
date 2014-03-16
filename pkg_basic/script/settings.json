@@ -1,0 +1,16 @@
+{
+	"serverName" : "RaSCServer",
+	"jettyPort" : 8080,
+	"controlPort" : 0,
+	"httpServices" : [
+		       { "contextPath":"/___WAR_NAME___",
+		         "serviceName":"___SERVICE_NAME___",
+			 "warPath":"../build/___WAR_NAME___.war" }
+	       	   ]
+	"msgpackServices" : [
+		       { "contextPath":"/___WAR_NAME___",
+		         "serviceName":"___SERVICE_NAME___",
+			 "warPath":"../build/___WAR_NAME___.war",
+			 "msgpackPort": 9090 }
+		     ]
+}

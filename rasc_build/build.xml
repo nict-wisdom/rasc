@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="wisdom2013_build" default="dist">
+
+	<path id="all.wisdom2013">
+		<fileset dir="../jp.go.nict.isp.wisdom2013.lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="build/jp.go.nict.isp.wisdom2013.api.jar" />
+		<pathelement location="build/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" />
+		<pathelement location="build/jp.go.nict.isp.wisdom2013.plugin.jar" />
+		<pathelement location="build/msgpack-java.jar" />
+		<pathelement location="build/msgpack-rpc-java.jar" />
+		<pathelement location="build/jp.go.nict.langrid.client.msgpackrpc.jar" />
+		<pathelement location="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc.jar" />
+		<pathelement location="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc.jar" />
+	</path>
+
+	<path id="msgpack-java.lib">
+		<fileset dir="../msgpack-java/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<path id="msgpack-rpc-java.lib">
+		<pathelement location="../msgpack-rpc-java/lib/slf4j-jdk14-1.5.8.jar" />
+		<pathelement location="../msgpack-rpc-java/lib/log4j-1.2.15.jar" />
+		<pathelement location="../msgpack-rpc-java/lib/netty-3.6.6.Final.jar" />
+		<pathelement location="../msgpack-rpc-java/lib/slf4j-api-1.5.8.jar" />
+	</path>
+
+	<target name="init">
+		<mkdir dir="build" />
+	</target>
+
+	<target name="msgpack-java" depends="init">
+		<mkdir dir="build/msgpack-java" />
+		<javac destdir="build/msgpack-java" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../msgpack-java/src/main" />
+			<classpath>
+				<path refid="msgpack-java.lib" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/msgpack-java.jar">
+			<fileset dir="build/msgpack-java" includes="**/*.class" />
+			<fileset dir="../msgpack-java/src/main" includes="**/*.java" />
+			<fileset dir="../msgpack-java/" includes="*.*" />
+		</jar>
+	</target>
+
+	<target name="msgpack-rpc-java" depends="msgpack-java">
+		<mkdir dir="build/msgpack-rpc-java" />
+		<javac destdir="build/msgpack-rpc-java" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../msgpack-rpc-java/src/main" />
+			<classpath>
+				<path refid="msgpack-java.lib" />
+				<path refid="msgpack-rpc-java.lib" />
+				<pathelement location="build/msgpack-java.jar" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/msgpack-rpc-java.jar">
+			<fileset dir="build/msgpack-rpc-java" includes="**/*.class" />
+			<fileset dir="../msgpack-rpc-java/src/main" includes="**/*.java" />
+			<fileset dir="../msgpack-rpc-java/" includes="*.*" />
+		</jar>
+	</target>
+
+	<target name="jp.go.nict.langrid.client.msgpackrpc" depends="msgpack-rpc-java">
+		<mkdir dir="build/jp.go.nict.langrid.client.msgpackrpc" />
+		<javac destdir="build/jp.go.nict.langrid.client.msgpackrpc" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.langrid.client.msgpackrpc/src" />
+			<classpath>
+				<path refid="all.wisdom2013" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/jp.go.nict.langrid.client.msgpackrpc.jar">
+			<fileset dir="build/jp.go.nict.langrid.client.msgpackrpc" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.langrid.client.msgpackrpc/src" includes="**/*.java" />
+		</jar>
+	</target>
+
+	<target name="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" depends="jp.go.nict.langrid.client.msgpackrpc">
+		<mkdir dir="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" />
+		<javac destdir="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc/src" />
+			<classpath>
+				<path refid="all.wisdom2013" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc.jar">
+			<fileset dir="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc/src" includes="**/*.java" />
+		</jar>
+	</target>
+
+
+	<target name="jp.go.nict.isp.wisdom2013.api" depends="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc">
+		<mkdir dir="build/jp.go.nict.isp.wisdom2013.api" />
+		<javac destdir="build/jp.go.nict.isp.wisdom2013.api" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.isp.wisdom2013.api/src" />
+			<classpath refid="all.wisdom2013">
+			</classpath>
+		</javac>
+		<jar jarfile="build/jp.go.nict.isp.wisdom2013.api.jar">
+			<fileset dir="build/jp.go.nict.isp.wisdom2013.api" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.api/src" includes="**/*.java" />
+		</jar>
+	</target>
+
+	<target name="jp.go.nict.isp.wisdom2013.plugin" depends="jp.go.nict.isp.wisdom2013.api">
+		<mkdir dir="build/jp.go.nict.isp.wisdom2013.plugin" />
+		<javac destdir="build/jp.go.nict.isp.wisdom2013.plugin" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.isp.wisdom2013.plugin/src" />
+			<classpath refid="all.wisdom2013">
+			</classpath>
+		</javac>
+		<jar jarfile="build/jp.go.nict.isp.wisdom2013.plugin.jar">
+			<fileset dir="build/jp.go.nict.isp.wisdom2013.plugin" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.plugin/src" includes="**/*.java" />
+		</jar>
+	</target>
+
+
+	<target name="jp.go.nict.isp.wrapper.wisdom.abstractservice" depends="jp.go.nict.isp.wisdom2013.plugin">
+		<mkdir dir="build/jp.go.nict.isp.wrapper.wisdom.abstractservice" />
+		<javac destdir="build/jp.go.nict.isp.wrapper.wisdom.abstractservice" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.isp.wrapper.wisdom.abstractservice/src" />
+			<classpath refid="all.wisdom2013">
+			</classpath>
+		</javac>
+		<jar jarfile="build/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar">
+			<fileset dir="build/jp.go.nict.isp.wrapper.wisdom.abstractservice" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.isp.wrapper.wisdom.abstractservice/src" includes="**/*.java" />
+		</jar>
+	</target>
+
+	<target name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" depends="jp.go.nict.isp.wrapper.wisdom.abstractservice">
+		<mkdir dir="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" />
+		<javac destdir="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" />
+			<classpath refid="all.wisdom2013" />
+			<classpath>
+				<path refid="msgpack-java.lib" />
+				<path refid="msgpack-rpc-java.lib" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc.jar">
+			<fileset dir="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" includes="**/*.java" />
+		</jar>
+	</target>
+
+	<target name="jp.go.nict.ial.servicecontainer.fluentd" depends="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc">
+		<mkdir dir="build/jp.go.nict.ial.servicecontainer.fluentd" />
+		<javac destdir="build/jp.go.nict.ial.servicecontainer.fluentd" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.ial.servicecontainer.fluentd/src" />
+			<classpath refid="all.wisdom2013" />
+			<classpath>
+				<path refid="msgpack-java.lib" />
+				<path refid="msgpack-rpc-java.lib" />
+			</classpath>
+		</javac>
+		<jar jarfile="build/jp.go.nict.ial.servicecontainer.fluentd.jar">
+			<fileset dir="build/jp.go.nict.ial.servicecontainer.fluentd" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.ial.servicecontainer.fluentd/src" includes="**/*.java" />
+		</jar>
+	</target>
+
+	<target name="wrapper_wisdom2013" depends="jp.go.nict.ial.servicecontainer.fluentd">
+
+		<mkdir dir="build/jp.go.nict.isp.wrapper.samplesearch.server" />
+		<javac destdir="build/jp.go.nict.isp.wrapper.samplesearch.server" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.isp.wrapper.samplesearch.server/src" />
+			<classpath refid="all.wisdom2013">
+			</classpath>
+		</javac>
+
+		<jar jarfile="build/jp.go.nict.isp.wrapper.samplesearch.server.jar">
+			<fileset dir="build/jp.go.nict.isp.wrapper.samplesearch.server" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.isp.wrapper.samplesearch.server/src" includes="**/*.java" />
+		</jar>
+
+		<mkdir dir="build/jp.go.nict.isp.wrapper.samplesearch.worker" />
+		<javac destdir="build/jp.go.nict.isp.wrapper.samplesearch.worker" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.isp.wrapper.samplesearch.worker/src" />
+			<classpath refid="all.wisdom2013">
+			</classpath>
+		</javac>
+
+		<jar jarfile="build/jp.go.nict.isp.wrapper.samplesearch.worker.jar">
+			<fileset dir="build/jp.go.nict.isp.wrapper.samplesearch.worker" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.isp.wrapper.samplesearch.worker/src" includes="**/*.java" />
+		</jar>
+
+		<mkdir dir="build/jp.go.nict.ial.webapps.wisdom.proxy" />
+		<javac destdir="build/jp.go.nict.ial.webapps.wisdom.proxy" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.ial.webapps.wisdom.proxy/src" />
+			<classpath refid="all.wisdom2013">
+			</classpath>
+		</javac>
+		<jar jarfile="build/jp.go.nict.ial.webapps.wisdom.proxy.jar">
+			<fileset dir="build/jp.go.nict.ial.webapps.wisdom.proxy" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.ial.webapps.wisdom.proxy/src" includes="**/*.java" />
+		</jar>
+
+	</target>
+
+	<target name="wisdom2013_war" depends="wrapper_wisdom2013">
+		<mkdir dir="build/war" />
+
+		<property name="war_name18" value="jp.go.nict.isp.webapps.samplesearch.server" />
+		<property name="src_name18" value="jp.go.nict.isp.wrapper.samplesearch.server" />
+
+		<war destfile="build/war/${war_name18}.war" webxml="../${war_name18}/WebContent/WEB-INF/web.xml">
+			<webinf dir="../${war_name18}/WebContent/WEB-INF/" includes="**/*.*" excludes="**/web.xml" />
+			<fileset dir="../${war_name18}/WebContent/" includes="*.*" />
+
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/axis/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/common/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/google/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/langrid/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/opensymphony/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/spring/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/tomcat6/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/trie4j/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/ws/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/json/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/jettymsgpack/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/mustache/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/fluentd/" includes="**/*.jar" />
+			<!--
+			<lib  dir="../jp.go.nict.isp.wisdom2013.lib/lib/solr/" includes="**/*.jar" />
+-->
+			<lib file="build/jp.go.nict.isp.wisdom2013.api.jar" />
+			<lib file="build/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" />
+
+			<lib file="build/jp.go.nict.isp.wisdom2013.plugin.jar" />
+			<lib file="build/jp.go.nict.langrid.client.msgpackrpc.jar" />
+			<lib file="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc.jar" />
+			<lib file="build/jp.go.nict.ial.servicecontainer.fluentd.jar" />
+			<lib file="build/msgpack-java.jar" />
+			<lib file="build/msgpack-rpc-java.jar" />
+			<lib dir="../msgpack-java/lib/" includes="**/*.jar" />
+			<lib file="../msgpack-rpc-java/lib/slf4j-jdk14-1.5.8.jar" />
+			<lib file="../msgpack-rpc-java/lib/log4j-1.2.15.jar" />
+			<lib file="../msgpack-rpc-java/lib/netty-3.6.6.Final.jar" />
+			<lib file="../msgpack-rpc-java/lib/slf4j-api-1.5.8.jar" />
+
+			<lib file="build/${src_name18}.jar" />
+
+		</war>
+		<copy file="build/war/${war_name18}.war" tofile="../${war_name18}/war/${war_name18}.war" />
+
+		<property name="war_name19" value="jp.go.nict.isp.webapps.samplesearch.worker" />
+		<property name="src_name19" value="jp.go.nict.isp.wrapper.samplesearch.worker" />
+
+		<war destfile="build/war/${war_name19}.war" webxml="../${war_name19}/WebContent/WEB-INF/web.xml">
+			<webinf dir="../${war_name19}/WebContent/WEB-INF/" includes="**/*.*" excludes="**/web.xml" />
+			<fileset dir="../${war_name19}/WebContent/" includes="*.*" />
+
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/axis/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/common/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/google/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/langrid/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/opensymphony/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/spring/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/tomcat6/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/trie4j/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/ws/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/json/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/jettymsgpack/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/mustache/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/fluentd/" includes="**/*.jar" />
+			<!--
+			<lib  dir="../jp.go.nict.isp.wisdom2013.lib/lib/solr/" includes="**/*.jar" />
+-->
+			<lib file="build/jp.go.nict.isp.wisdom2013.api.jar" />
+			<lib file="build/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" />
+
+			<lib file="build/jp.go.nict.isp.wisdom2013.plugin.jar" />
+			<lib file="build/jp.go.nict.langrid.client.msgpackrpc.jar" />
+			<lib file="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc.jar" />
+			<lib file="build/jp.go.nict.ial.servicecontainer.fluentd.jar" />
+			<lib file="build/msgpack-java.jar" />
+			<lib file="build/msgpack-rpc-java.jar" />
+			<lib dir="../msgpack-java/lib/" includes="**/*.jar" />
+			<lib file="../msgpack-rpc-java/lib/slf4j-jdk14-1.5.8.jar" />
+			<lib file="../msgpack-rpc-java/lib/log4j-1.2.15.jar" />
+			<lib file="../msgpack-rpc-java/lib/netty-3.6.6.Final.jar" />
+			<lib file="../msgpack-rpc-java/lib/slf4j-api-1.5.8.jar" />
+
+			<lib file="build/${src_name19}.jar" />
+
+		</war>
+		<copy file="build/war/${war_name19}.war" tofile="../${war_name19}/war/${war_name19}.war" />
+
+		<property name="war_name23" value="jp.go.nict.ial.webapps.wisdom.proxy" />
+		<property name="src_name23" value="jp.go.nict.ial.webapps.wisdom.proxy" />
+
+		<war destfile="build/war/${war_name23}.war" webxml="../${war_name23}/WebContent/WEB-INF/web.xml">
+			<webinf dir="../${war_name23}/WebContent/WEB-INF/" includes="**/*.*" excludes="**/web.xml" />
+			<fileset dir="../${war_name23}/WebContent/" includes="*.*" />
+			<fileset dir="../${war_name23}/src" includes="**/*.java" />
+
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/axis/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/common/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/google/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/langrid/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/opensymphony/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/spring/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/tomcat6/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/trie4j/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/ws/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/json/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/jettymsgpack/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/mustache/" includes="**/*.jar" />
+			<lib dir="../jp.go.nict.isp.wisdom2013.lib/lib/fluentd/" includes="**/*.jar" />
+			<lib file="build/jp.go.nict.isp.wisdom2013.api.jar" />
+			<lib file="build/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" />
+			<lib file="build/jp.go.nict.isp.wisdom2013.plugin.jar" />
+			<lib file="build/jp.go.nict.langrid.client.msgpackrpc.jar" />
+			<lib file="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc.jar" />
+			<lib file="build/jp.go.nict.ial.servicecontainer.fluentd.jar" />
+			<lib file="build/msgpack-java.jar" />
+			<lib file="build/msgpack-rpc-java.jar" />
+			<lib dir="../msgpack-java/lib/" includes="**/*.jar" />
+			<lib file="../msgpack-rpc-java/lib/slf4j-jdk14-1.5.8.jar" />
+			<lib file="../msgpack-rpc-java/lib/log4j-1.2.15.jar" />
+			<lib file="../msgpack-rpc-java/lib/netty-3.6.6.Final.jar" />
+			<lib file="../msgpack-rpc-java/lib/slf4j-api-1.5.8.jar" />
+			<lib file="build/${src_name23}.jar" />
+		</war>
+		<copy file="build/war/${war_name23}.war" tofile="../${war_name23}/war/${war_name23}.war" />
+	</target>
+
+	<target name="jetty" depends="wisdom2013_war">
+		<chmod dir="../jp.go.nict.langrid.webapps.jetty.embedded/scripts/" perm="777" includes="**/*.sh" />
+	</target>
+
+	<target name="all" depends="jetty">
+		<mkdir dir="build/jp.go.nict.langrid.webapps.jetty.embedded" />
+		<javac destdir="build/jp.go.nict.langrid.webapps.jetty.embedded" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="../jp.go.nict.langrid.webapps.jetty.embedded/src" />
+			<classpath>
+				<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/jetty9/">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset file="../jp.go.nict.isp.wisdom2013.lib/lib/jettymsgpack/jp.go.nict.ial.jetty.msgpackrpc.serviceloader.api.jar" />
+				<fileset file="../jp.go.nict.isp.wisdom2013.lib/lib/json/jsonic-1.3.0.jar" />
+			</classpath>
+		</javac>
+		<unzip src="../jp.go.nict.isp.wisdom2013.lib/lib/eclipse/jar-in-jar-loader.zip" dest="build/jp.go.nict.langrid.webapps.jetty.embedded" />
+
+		<path id="jetty.libpath">
+			<pathelement location="../jp.go.nict.isp.wisdom2013.lib/lib" />
+		</path>
+		<pathconvert property="jetty.pathinfo" refid="jetty.libpath" pathsep=" " targetos="unix" />
+
+		<path id="jetty.jars">
+			<fileset file="../jp.go.nict.isp.wisdom2013.lib/lib/json/jsonic-1.3.0.jar" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/jetty9/" includes="**/*.jar" />
+		</path>
+
+		<pathconvert property="jetty.clspath" pathsep=" " targetos="unix" refid="jetty.jars">
+			<map from="${jetty.pathinfo}/json/" to="" />
+			<map from="${jetty.pathinfo}/jetty9/" to="" />
+		</pathconvert>
+
+
+		<jar jarfile="build/embeddedserver.jar">
+			<fileset dir="build/jp.go.nict.langrid.webapps.jetty.embedded" includes="**/*.class" />
+			<fileset dir="../jp.go.nict.langrid.webapps.jetty.embedded/src" includes="**/*.java" />
+			<fileset file="../jp.go.nict.isp.wisdom2013.lib/lib/json/jsonic-1.3.0.jar" />
+			<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/jetty9/" includes="**/*.jar" />
+
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
+				<attribute name="Rsrc-Main-Class" value="jp.go.nict.langrid.webapps.jetty.embedded.EmbeddedServer" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Rsrc-Class-Path" value="./ ${jetty.clspath} " />
+			</manifest>
+
+		</jar>
+		<copy file="build/embeddedserver.jar" tofile="../jp.go.nict.langrid.webapps.jetty.embedded/jar/embeddedserver.jar" />
+	</target>
+
+	<target name="dist" depends="all">
+	</target>
+
+	<target name="clean">
+		<delete dir="build" />
+	</target>
+
+</project>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.utility"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/jp.go.nict.isp.wisdom2013.api"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/common/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/google/protobuf-java-2.2.0.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.soap.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.ws_1_2.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.client.ws_1_2.protobuf.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.protobufrpc.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.handler.protobufrpc.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.service.common_1_2.jar"/>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jp.go.nict.isp.wrapper.wisdom.abstractservice"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

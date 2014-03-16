@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>jp.go.nict.ial.webapps.websocketjsonrpc</display-name>
+
+  <context-param>
+    <param-name>servicesPath</param-name>
+    <param-value>WEB-INF/services</param-value>
+  </context-param>
+
+<!--
+	<servlet>
+		<servlet-name>TomcatWebSocketServlet</servlet-name>
+		<servlet-class>jp.go.nict.ial.websocket.servlet.TomcatWebSocketServlet</servlet-class>
+		<init-param>
+			<param-name>handlerClass</param-name>
+			<param-value>jp.go.nict.ial.servicecontainer.handler.websocketjson.WebSocketJsonRpcHandler</param-value>
+		</init-param>
+		<load-on-startup>20</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TomcatWebSocketServlet</servlet-name>
+		<url-pattern>/wsjsServices/*</url-pattern>
+	</servlet-mapping>
+-->
+	<servlet>
+		<servlet-name>JettyWebsocketServlet</servlet-name>
+		<servlet-class>jp.go.nict.ial.websocket.servlet.JettyWebSocketServlet</servlet-class>
+		<init-param>
+			<param-name>handlerClass</param-name>
+			<param-value>jp.go.nict.ial.servicecontainer.handler.websocketjson.WebSocketJsonRpcHandler</param-value>
+		</init-param>
+		<load-on-startup>20</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>JettyWebsocketServlet</servlet-name>
+		<url-pattern>/wsjsServices/*</url-pattern>
+	</servlet-mapping>
+
+  <mime-mapping>
+    <extension>wsdl</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>xsd</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>

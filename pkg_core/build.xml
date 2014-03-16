@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="rasc_release" default="package">
+
+  <property name="version" value="1.0.0"/>
+  <property name="package_name" value="rasc-core-${version}"/>
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+  <path id="all.wisdom2013">
+    <fileset dir="../jp.go.nict.isp.wisdom2013.lib">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement location="build/msgpack-java.jar" />
+    <pathelement location="build/msgpack-rpc-java.jar" />
+  </path>
+
+  <path id="msgpack-java.lib">
+    <fileset dir="../msgpack-java/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+  
+  <path id="msgpack-rpc-java.lib">
+    <pathelement location="../msgpack-rpc-java/lib/slf4j-jdk14-1.5.8.jar" />
+    <pathelement location="../msgpack-rpc-java/lib/log4j-1.2.15.jar" />
+    <pathelement location="../msgpack-rpc-java/lib/netty-3.6.6.Final.jar" />
+    <pathelement location="../msgpack-rpc-java/lib/slf4j-api-1.5.8.jar" />
+  </path>
+  
+  <target name="init">
+    <mkdir dir="build" />
+  </target>
+
+  <target name="clean" depends="init">
+    <delete dir="build"/>
+    <delete dir="dist"/>
+  </target>
+
+  <target name="msgpack-java" depends="init">
+    <mkdir dir="build/msgpack-java" />
+    <javac destdir="build/msgpack-java" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="../msgpack-java/src/main" />
+      <classpath>
+	<path refid="msgpack-java.lib" />
+      </classpath>
+    </javac>
+    <jar jarfile="build/msgpack-java.jar" >
+      <fileset dir="build/msgpack-java" includes="**/*.class" />
+      <fileset dir="../msgpack-java/src/main" includes="**/*.java" />
+    </jar>
+  </target>
+
+  <target name="msgpack-rpc-java" depends="msgpack-java">
+    <mkdir dir="build/msgpack-rpc-java" />
+    <javac destdir="build/msgpack-rpc-java" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="../msgpack-rpc-java/src/main" />
+      <classpath>
+	<path refid="msgpack-java.lib" />
+	<path refid="msgpack-rpc-java.lib" />
+	<pathelement location="build/msgpack-java.jar" />
+      </classpath>
+    </javac>
+    <jar jarfile="build/msgpack-rpc-java.jar" >
+      <fileset dir="build/msgpack-rpc-java" includes="**/*.class" />
+      <fileset dir="../msgpack-rpc-java/src/main" includes="**/*.java" />
+    </jar>
+  </target>
+
+  <target name="msgpack-rpc-client" depends="msgpack-rpc-java">
+    <mkdir dir="build/msgpack-rpc-client" />
+    <javac destdir="build/msgpack-rpc-client" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="../jp.go.nict.langrid.client.msgpackrpc/src" />
+      <classpath>
+	<path refid="all.wisdom2013"/>
+      </classpath>
+    </javac>
+    <jar jarfile="build/msgpack-rpc-client.jar" >
+      <fileset dir="build/msgpack-rpc-client" includes="**/*.class" />
+      <fileset dir="../jp.go.nict.langrid.client.msgpackrpc/src" includes="**/*.java" />
+    </jar>
+  </target>
+
+  <target name="wrapper-api" depends="msgpack-rpc-client">
+    <mkdir dir="build/wrapper-api" />
+    <javac destdir="build/wrapper-api" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="../jp.go.nict.wisdom.wrapper.api/src" />
+      <classpath>
+	<path refid="all.wisdom2013"/>
+      </classpath>
+    </javac>
+    <jar jarfile="build/wrapper-api.jar" >
+      <fileset dir="build/wrapper-api" includes="**/*.class" />
+      <fileset dir="../jp.go.nict.wisdom.wrapper.api/src" includes="**/*.java" />
+    </jar>
+  </target>
+
+  <target name="msgpackrpc-handler" depends="wrapper-api">
+    <mkdir dir="build/msgpackrpc-handler" />
+    <javac destdir="build/msgpackrpc-handler" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="../jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" />
+      <classpath>
+	<path refid="all.wisdom2013"/>
+	<path refid="msgpack-java.lib" />
+	<path refid="msgpack-rpc-java.lib" />
+	<pathelement location="build/wrapper-api.jar" />
+	<pathelement location="build/msgpack-rpc-client.jar" />
+      </classpath>
+    </javac>
+    <jar jarfile="build/msgpackrpc-handler.jar" >
+      <fileset dir="build/msgpackrpc-handler" includes="**/*.class" />
+      <fileset dir="../jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" includes="**/*.java" />
+    </jar>
+  </target>
+
+  <target name="msgpackrpc-util" depends="msgpackrpc-handler">
+    <mkdir dir="build/msgpackrpc-util" />
+    <javac destdir="build/msgpackrpc-util" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="../jp.go.nict.langrid.servicecontainer.msgpackrpc.util/src" />
+      <classpath>
+	<path refid="all.wisdom2013"/>
+	<pathelement location="build/msgpack-rpc-client.jar"/>
+	<pathelement location="build/msgpackrpc-handler.jar"/>
+	<pathelement location="build/wrapper-api.jar"/>
+      </classpath>
+    </javac>
+    <jar jarfile="build/msgpackrpc-util.jar" >
+      <fileset dir="build/msgpackrpc-util" includes="**/*.class" />
+      <fileset dir="../jp.go.nict.langrid.servicecontainer.msgpackrpc.util/src" includes="**/*.java" />
+    </jar>
+  </target>
+
+  <target name="wrapper" depends="msgpackrpc-util">
+    <mkdir dir="build/wrapper" />
+    <javac destdir="build/wrapper" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="../jp.go.nict.wisdom.wrapper/src" />
+      <classpath>
+	<path refid="all.wisdom2013"/>
+	<pathelement location="build/wrapper-api.jar" />
+      </classpath>
+    </javac>
+    <jar jarfile="build/wrapper.jar" >
+      <fileset dir="build/wrapper" includes="**/*.class" />
+      <fileset dir="../jp.go.nict.wisdom.wrapper/src" includes="**/*.java" />
+    </jar>
+  </target>
+
+  <target name="package" depends="wrapper">
+    <mkdir dir="build/jar" />
+    <property name="wisdom2013-lib"    value="../jp.go.nict.isp.wisdom2013.lib/lib"/>
+    <property name="langrid-lib"       value="${wisdom2013-lib}/langrid"/>
+    <property name="langrid-libs"      value="${langrid-lib}/jp.go.nict.langrid.client.jar ${langrid-lib}/jp.go.nict.langrid.commons.beanutils.jar ${langrid-lib}/jp.go.nict.langrid.commons.jar ${langrid-lib}/jp.go.nict.langrid.commons.protobufrpc.jar ${langrid-lib}/jp.go.nict.langrid.commons.ws.jar ${langrid-lib}/jp.go.nict.langrid.cosee.jar ${langrid-lib}/jp.go.nict.langrid.servicecontainer.jar"/>
+    <property name="spring-lib"        value="${wisdom2013-lib}/spring"/>
+    <property name="spring-libs"       value="${spring-lib}/org.springframework.asm-3.0.6.RELEASE.jar ${spring-lib}/org.springframework.beans-3.0.6.RELEASE.jar ${spring-lib}/org.springframework.context-3.0.6.RELEASE.jar ${spring-lib}/org.springframework.core-3.0.6.RELEASE.jar ${spring-lib}/org.springframework.expression-3.0.6.RELEASE.jar"/>
+    <property name="opensymphony-libs" value="${wisdom2013-lib}/opensymphony/oscache-2.4.1.jar"/>
+    <property name="jaxrpc-libs"       value="${wisdom2013-lib}/ws/jaxrpc.jar"/>
+    <property name="google-libs"       value="${wisdom2013-lib}/google/protobuf-java-2.2.0.jar ${wisdom2013-lib}/google/guava-15.0.jar"/>
+    <property name="fluentd-libs"      value="${wisdom2013-lib}/fluentd/fluent-logger.jar"/>
+    <property name="json-libs"         value="${wisdom2013-lib}/json/jsonic-1.3.0.jar"/>
+    <property name="wisdom2013-libs"   value="${langrid-libs} ${spring-libs} ${opensymphony-libs} ${jaxrpc-libs} ${google-libs} ${fluentd-libs} ${json-libs}"/>
+    <property name="common-lib"        value="${wisdom2013-lib}/common"/>
+    <property name="common-libs"       value="${common-lib}/commons-lang-2.4.jar ${common-lib}/commons-logging-1.0.4.jar"/>
+    <property name="msgpack-lib"       value="../msgpack-java/lib"/>
+    <property name="msgpackRPC-lib"    value="../msgpack-rpc-java/lib"/>
+    <property name="msgpack-libs"      value="${msgpack-lib}/javassist.jar ${msgpack-lib}/json-simple-1.1.1.jar ${msgpackRPC-lib}/slf4j-api-1.5.8.jar ${msgpackRPC-lib}/slf4j-jdk14-1.5.8.jar ${msgpackRPC-lib}/log4j-1.2.15.jar ${msgpackRPC-lib}/netty-3.6.6.Final.jar"/>
+    <property name="build-libs"        value="build/msgpack-java.jar build/msgpack-rpc-java.jar build/msgpack-rpc-client.jar build/msgpackrpc-handler.jar build/wrapper-api.jar build/wrapper.jar build/msgpackrpc-util.jar"/>
+    <property name="class-path"        value="${wisdom2013-libs} ${msgpack-libs} ${common-libs} ${build-libs}"/>
+
+    <!-- Copy jars -->
+    <propertyregex property="class-path2"
+		   input="${class-path}"
+		   regexp=" "
+		   replace=":"
+		   global="true" />
+    <mkdir dir="build/jar/lib" />
+    <copy todir="build/jar/lib" flatten="true">
+      <path>
+	<pathelement path="${class-path2}" />
+      </path>
+    </copy>
+
+    <!-- 設定ファイル, 起動スクリプト, サンプルクライアント -->
+    <mkdir dir="build/jar/WEB-INF" />
+    <mkdir dir="build/jar/WEB-INF/serviceimpl" />
+    <copy todir="build/jar/WEB-INF/serviceimpl/">
+      <fileset dir="sample/WEB-INF/serviceimpl/">
+	<include name = "*.xml" />
+      </fileset>
+    </copy>
+    <copy file="./sample/logger.property" tofile="build/jar/logger.property" />
+    <copy file="./sample/SampleClient.java" tofile="build/jar/SampleClient.java" />
+    <exec executable="cp">
+      <arg line="./sample/server.sh build/jar/"/>
+    </exec>
+
+    <!-- パッケージファイル作成 -->
+    <mkdir dir="./dist" />
+    <zip destfile="dist/${package_name}.zip"
+	 update="true"
+	 preserve0permissions="true" >
+      <zipfileset dir="build/jar" prefix="${package_name}"/>
+    </zip>
+  </target>
+</project>

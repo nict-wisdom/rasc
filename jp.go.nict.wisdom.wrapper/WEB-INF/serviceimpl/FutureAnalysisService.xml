@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="target"
+		class="jp.go.nict.langrid.servicecontainer.handler.TargetServiceFactory">
+		<property name="service">
+			<bean class="jp.go.nict.wisdom.wrapper.jdepp.FutureAnalysisService">
+				<property name="cmdLine" value="/opt/PERL/perl-5.16.0-IT-TH-PL/bin/perl -I /Users/mtanaka/dev/ch_scripts/Caus/bin /Users/mtanaka/dev/ch_scripts/Caus/bin/struct-to-feats_daemon.pl -e /Users/mtanaka/dev/ch_scripts/Caus/WISDOM-feat-extr/ei-ns -c /Users/mtanaka/dev/ch_scripts/Caus/WISDOM-feat-extr/jpe-wc" />
+				<property name="pollTimeOut" value="3000" />
+				<property name="poolSize" value="20" />
+				<property name="timeOut" value="60000" />
+				<property name="startWait" value="1000" />
+				<property name="restartWait" value="1000" />
+				<property name="bufSize" value="2000000" />
+			</bean>
+		</property>
+	</bean>
+</beans>
