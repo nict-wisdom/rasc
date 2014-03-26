@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="rasc_release" default="package">
 
-  <property name="version" value="1.0.0"/>
+  <property environment="env"/>
+
+  <fail unless="env.RASC_VERSION" message="Env variable &quot;RASC_VERSION&quot; needs to be set."/>
+  <property name="version" value="${env.RASC_VERSION}"/>
+
   <property name="package_name" value="rasc-basic-${version}"/>
 <!--
   <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
