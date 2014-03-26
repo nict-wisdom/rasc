@@ -35,8 +35,8 @@ public class StandardInputCommand extends StringIOCommand{
 	private boolean delLastNewline = false;
 	private boolean includeDelim = false;
 
-	public StandardInputCommand(String[] cmd, String delimiterIn, String delimiterOut, boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartwait, int bufSize) {
-		super(cmd, timeOut, startWait, restartwait, bufSize);
+	public StandardInputCommand(String[] cmd, String dir, String delimiterIn, String delimiterOut, boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartwait, int bufSize) {
+		super(cmd, dir, timeOut, startWait, restartwait, bufSize);
 		if(delimiterIn != null)
 			this.delimiterIn = delimiterIn.replaceAll("\\\\n", lineSep);
 		if(delimiterOut != null)

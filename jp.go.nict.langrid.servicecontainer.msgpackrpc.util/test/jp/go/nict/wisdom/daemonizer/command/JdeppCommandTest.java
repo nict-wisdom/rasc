@@ -26,7 +26,7 @@ public class JdeppCommandTest {
 	@Test
 	public void test() throws InterruptedException, IOException {
 
-		JdeppCommand cmd = new JdeppCommand("/Users/mtanaka/dev/wisdom/beta/tools/jdep/bin/jdep", 60000, 1000, 1000, 2000000);
+		JdeppCommand cmd = new JdeppCommand(new String[]{"/Users/mtanaka/dev/wisdom/beta/tools/jdep/bin/jdep"}, null, null, null, false, false, 60000, 1000, 1000, 2000000);
 		cmd.start();
 		cmd.put("TEST");
 		System.out.print(cmd.getNextResult());

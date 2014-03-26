@@ -31,8 +31,8 @@ public class JdeppCommand extends StringIOCommand{
 	private static final String lineSep = System.getProperty("line.separator");
 	private static final String DELIMITER = "EOS" + System.getProperty("line.separator");
 
-	public JdeppCommand(String cmd, int timeOut, int startWait, int restartwait, int bufSize) {
-		super(cmd, timeOut, startWait, restartwait, bufSize);
+	public JdeppCommand(String[] cmd, String dir, String delimiterIn, String delimiterOut, boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartwait, int bufSize) {
+		super(cmd, dir, timeOut, startWait, restartwait, bufSize);
 	}
 
 	public void put(String input) throws IOException {

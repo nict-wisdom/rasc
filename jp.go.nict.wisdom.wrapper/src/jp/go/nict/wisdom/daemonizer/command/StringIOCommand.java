@@ -33,12 +33,8 @@ public abstract class StringIOCommand extends DaemonizedCommand {
 
 	private LinkedList<String> results = new LinkedList<String>();
 
-	public StringIOCommand(String cmd, int timeOut, int startWait, int restartwait, int bufSize) {
-		super(cmd, timeOut, startWait, restartwait, bufSize);
-	}
-
-	public StringIOCommand(String[] cmd, int timeOut, int startWait, int restartwait, int bufSize) {
-		super(cmd, timeOut, startWait, restartwait, bufSize);
+	public StringIOCommand(String[] cmd, String dir, int timeOut, int startWait, int restartwait, int bufSize) {
+		super(cmd, dir, timeOut, startWait, restartwait, bufSize);
 	}
 
 	public abstract String getNextResult() throws InterruptedException, IOException;
@@ -49,18 +45,27 @@ public abstract class StringIOCommand extends DaemonizedCommand {
 	}
 
 	public String doGetNextResult(boolean includeDelim) throws InterruptedException, IOException {
-		int indexDelim;
+		int indexDelim, useBufLen;
+		int delimLen = getDelimiter().length();
+		String serchStr;
 		StringBuffer buf = new StringBuffer();
 		while (results.isEmpty()) {
 			String retCmd = super.doGetNextResult();
+			if(buf.length() < delimLen){
+				serchStr = buf + retCmd;
+				useBufLen = buf.length();
+			}else{
+				useBufLen = delimLen;
+				serchStr = buf.substring(buf.length() - delimLen) + retCmd;
+			}
 			buf.append(retCmd);
 
-			if ((indexDelim = retCmd.indexOf(getDelimiter())) >= 0) {
+			if ((indexDelim = serchStr.indexOf(getDelimiter())) >= 0) {
 				int resultLength = buf.length() - retCmd.length();
 				if (includeDelim) {
-					resultLength += indexDelim + getDelimiter().length();
+					resultLength += indexDelim - useBufLen + getDelimiter().length();
 				} else {
-					resultLength += indexDelim;
+					resultLength += indexDelim - useBufLen;
 				}
 				String retStr = buf.substring(0, resultLength);
 				results.add(retStr);

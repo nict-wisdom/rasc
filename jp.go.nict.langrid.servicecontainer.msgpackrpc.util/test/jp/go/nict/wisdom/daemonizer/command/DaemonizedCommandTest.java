@@ -45,7 +45,7 @@ public abstract class DaemonizedCommandTest {
 	public void setUp() throws Exception {
 
 		ConfUtil conf = new ConfUtil(propDir + "/" + target + ".properties");
-		cmd = new JdeppCommand(conf.getCommandPath(), 60000, 1000, 1000, 2000000);
+		cmd = new JdeppCommand(conf.getCommandPath(), null, null, null, false, false, 60000, 1000, 1000, 2000000);
 		cmd.start();
 	}
 

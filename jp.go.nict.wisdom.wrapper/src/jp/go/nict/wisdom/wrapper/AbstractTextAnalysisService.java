@@ -40,96 +40,47 @@ public abstract class AbstractTextAnalysisService implements TextAnalysisService
 	protected static final AtomicInteger numCmd = new AtomicInteger();
 
 	protected static BlockingQueue<StringIOCommand> cmdPool = new LinkedBlockingQueue<>();
-	private String cmdLine = null;
-	private int poolSize = 0;
+	private String directory = null;
+	private String cmdLine;
+	private List<String> cmdArray;
+	private String delimiterIn;
+	private String delimiterOut;
+	private boolean delLastNewline = false;
+	private boolean includeDelim = false;
+	private int pollTimeOut = 3000;
+	private int poolSize = 10;
+	private int initPoolSize = 1;
+	private int timeOut = 60000;
+	private int startWait = 1000;
+	private int restartWait = 1000;
+	private int bufSize = 2000000;
 
 	public AbstractTextAnalysisService() {
 	}
 
 	protected abstract StringIOCommand getInstance() throws IOException, InterruptedException;
 
-	protected StringIOCommand getInstance(
-			Class<? extends StringIOCommand> cmdClass, String cmdLine,
-			int pollTimeOut, int poolSize,
-			int timeOut, int startWait, int restartWait, int bufSize
-			)
-			throws IOException, InterruptedException {
-
+	protected StringIOCommand getInstance(Class<? extends StringIOCommand> cmdClass) throws IOException, InterruptedException {
 		logger.info("getInstance(...)");
-		this.cmdLine = cmdLine;
-		this.poolSize = poolSize;
-		StringIOCommand cmd = null;
-		if (cmdPool.isEmpty() && numCmd.getAndIncrement() < poolSize) {
-			int num = numCmd.get();
-			// Create new process
-			try {
-				Class<?>[] argType = {String.class, int.class, int.class, int.class, int.class};
-				Constructor<? extends StringIOCommand> constructor;
-				constructor = cmdClass.getConstructor(argType);
-				cmd = constructor.newInstance(cmdLine, timeOut, startWait, restartWait, bufSize);
-			} catch (InstantiationException | IllegalAccessException
-					| IllegalArgumentException | InvocationTargetException
-					| NoSuchMethodException | SecurityException e) {
-				logger.severe(e.getMessage());
-				throw new RuntimeException(e);
-			}
-			cmd.start();
-
-			logger.info("Created a new process. Pooled processes : " + num);
-		} else {
-			int num = numCmd.get();
-			if(num >= Integer.MAX_VALUE - poolSize){
-				numCmd.set(poolSize);
-				logger.config("numCmd reset");
-			}
-			// Reuse running process
-			try {
-				cmd = cmdPool.poll(pollTimeOut, TimeUnit.MILLISECONDS);
-				if(cmd == null){
-					String msg = "All running processes are occupied. Timeout occured.";
-					logger.info(msg);
-					throw new IOException(msg);
-				}
-				cmd.clear();
-				logger.finest("Reused a process");
-			} catch (InterruptedException e) {
-				logger.info("Polling of pooled process was interrupted.");
-				throw e;
-			}
+		if(cmdLine != null && cmdArray != null){
+			logger.severe("Both cmdLine and CmdArray is set. Set either one.");
+			throw new IOException("Both cmdLine and CmdArray is set. Set either one.");
 		}
-		return cmd;
-	}
-
-	protected StringIOCommand getInstance(
-			Class<? extends StringIOCommand> cmdClass, String[] cmdLine,
-			String delimiterIn, String delimiterOut,
-			boolean delLastNewline, boolean includeDelim,
-			int pollTimeOut, int poolSize,
-			int timeOut, int startWait, int restartWait, int bufSize
-			)
-			throws IOException, InterruptedException {
-
-		logger.info("getInstance(...)");
-		if(this.cmdLine == null){
-			int i = 0;
-			for(i = 0; i < cmdLine.length; i++){
-				if(i == 0)
-					this.cmdLine = cmdLine[i];
-				else
-					this.cmdLine = this.cmdLine + " " + cmdLine[i];
-			}
-		}
-		this.poolSize = poolSize;
+		String[] exeCmd;
+		if(cmdLine != null)
+			exeCmd = cmdLine.split(" ");
+		else
+			exeCmd = cmdArray.toArray(new String[0]);
 
 		StringIOCommand cmd = null;
 		if (cmdPool.isEmpty() && numCmd.getAndIncrement() < poolSize) {
 			int num = numCmd.get();
 			// Create new process
 			try {
-				Class<?>[] argType = {String[].class, String.class, String.class, boolean.class, boolean.class, int.class, int.class, int.class, int.class};
+				Class<?>[] argType = {String[].class, String.class, String.class, String.class, boolean.class, boolean.class, int.class, int.class, int.class, int.class};
 				Constructor<? extends StringIOCommand> constructor;
 				constructor = cmdClass.getConstructor(argType);
-				cmd = constructor.newInstance(cmdLine, delimiterIn, delimiterOut, delLastNewline, includeDelim, timeOut, startWait, restartWait, bufSize);
+				cmd = constructor.newInstance(exeCmd, directory, delimiterIn, delimiterOut, delLastNewline, includeDelim, timeOut, startWait, restartWait, bufSize);
 			} catch (InstantiationException | IllegalAccessException
 					| IllegalArgumentException | InvocationTargetException
 					| NoSuchMethodException | SecurityException e) {
@@ -228,7 +179,9 @@ public abstract class AbstractTextAnalysisService implements TextAnalysisService
 
 	@Override
 	public void init() {
-		init(1);
+		int size = initPoolSize > poolSize ? 1 : initPoolSize;
+		logger.info("init() initSize = " + size);
+		init(size);
 	}
 
 	public void init(int size) {
@@ -256,6 +209,118 @@ public abstract class AbstractTextAnalysisService implements TextAnalysisService
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	public String getCmdLine() {
+		return cmdLine;
+	}
+
+	public void setCmdLine(String cmdLine) {
+		this.cmdLine = cmdLine;
+	}
+
+	public List<String> getCmdArray() {
+		return cmdArray;
+	}
+
+	public void setCmdArray(List<String> cmdArray) {
+		this.cmdArray = cmdArray;
+	}
+
+	public String getDelimiterIn() {
+		return delimiterIn;
+	}
+
+	public void setDelimiterIn(String delimiterIn) {
+		this.delimiterIn = delimiterIn;
+	}
+
+	public String getDelimiterOut() {
+		return delimiterOut;
+	}
+
+	public void setDelimiterOut(String delimiterOut) {
+		this.delimiterOut = delimiterOut;
+	}
+
+	public boolean isDelLastNewline() {
+		return delLastNewline;
+	}
+
+	public void setDelLastNewline(boolean delLastNewline) {
+		this.delLastNewline = delLastNewline;
+	}
+
+	public boolean isIncludeDelim() {
+		return includeDelim;
+	}
+
+	public void setIncludeDelim(boolean includeDelim) {
+		this.includeDelim = includeDelim;
+	}
+
+	public int getPollTimeOut() {
+		return pollTimeOut;
+	}
+
+	public void setPollTimeOut(int pollTimeOut) {
+		this.pollTimeOut = pollTimeOut;
+	}
+
+	public int getPoolSize() {
+		return poolSize;
+	}
+
+	public void setPoolSize(int poolSize) {
+		this.poolSize = poolSize;
+	}
+
+	public int getInitPoolSize() {
+		return initPoolSize;
+	}
+
+	public void setInitPoolSize(int initPoolSize) {
+		this.initPoolSize = initPoolSize;
+	}
+
+	public int getTimeOut() {
+		return timeOut;
+	}
+
+	public void setTimeOut(int timeOut) {
+		this.timeOut = timeOut;
+	}
+
+	public int getStartWait() {
+		return startWait;
+	}
+
+	public void setStartWait(int startWait) {
+		this.startWait = startWait;
+	}
+
+	public int getRestartWait() {
+		return restartWait;
+	}
+
+	public void setRestartWait(int restartWait) {
+		this.restartWait = restartWait;
+	}
+
+	public int getBufSize() {
+		return bufSize;
+	}
+
+	public void setBufSize(int bufSize) {
+		this.bufSize = bufSize;
+	}
+
+	public String getDirectory() {
+		return directory;
+	}
+
+	public void setDirectory(String directory) {
+		this.directory = directory;
 	}
 
 	private class InputWorker implements Runnable {

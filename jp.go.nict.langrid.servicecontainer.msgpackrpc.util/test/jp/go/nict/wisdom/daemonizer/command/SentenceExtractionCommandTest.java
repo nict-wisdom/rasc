@@ -28,7 +28,7 @@ public class SentenceExtractionCommandTest {
 	@Test
 	public void test() throws InterruptedException, IOException {
 
-		SentenceExtractionCommand cmd = new SentenceExtractionCommand("/opt/PERL/perl-5.16.0-IT-TH-PL/bin/perl -I /Users/mtanaka/dev/daemonizer/text_mgr/WISDOM/datapool/WWW2sf/tool/perl -I /Users/mtanaka/perl5/lib/perl5 /Users/mtanaka/dev/wisdom/beta/repos/text_mgr_20130220/WISDOM/datapool/WWW2sf/tool/scripts/extract-sentences-stdin.perl", 60000, 1000, 1000, 2000000);
+		SentenceExtractionCommand cmd = new SentenceExtractionCommand(new String[]{"/opt/PERL/perl-5.16.0-IT-TH-PL/bin/perl -I /Users/mtanaka/dev/daemonizer/text_mgr/WISDOM/datapool/WWW2sf/tool/perl -I /Users/mtanaka/perl5/lib/perl5 /Users/mtanaka/dev/wisdom/beta/repos/text_mgr_20130220/WISDOM/datapool/WWW2sf/tool/scripts/extract-sentences-stdin.perl"}, null, null, null, false, false, 60000, 1000, 1000, 2000000);
 		cmd.start();
 
 		String html = read("/Users/mtanaka/dev/daemonizer/test_resources/html/html.1352369160.15288");

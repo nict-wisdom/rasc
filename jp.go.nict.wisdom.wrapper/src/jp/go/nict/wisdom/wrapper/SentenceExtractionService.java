@@ -26,79 +26,12 @@ import jp.go.nict.wisdom.daemonizer.command.StringIOCommand;
 public class SentenceExtractionService extends AbstractTextAnalysisService {
 	private static Logger logger = Logger.getLogger(SentenceExtractionService.class.getName());
 
-	private String cmdLine;
-	private int pollTimeOut;
-	private int poolSize;
-	private int timeOut;
-	private int startWait;
-	private int restartWait;
-	private int bufSize;
-
 	public SentenceExtractionService() {
 		logger.info("new SentenceExtractionService()");
 	}
 
 	@Override
 	protected StringIOCommand getInstance() throws IOException, InterruptedException {
-		return super.getInstance(SentenceExtractionCommand.class, cmdLine,
-				pollTimeOut, poolSize,
-				timeOut, startWait, restartWait, bufSize
-		);
-	}
-
-	public String getCmdLine() {
-		return cmdLine;
-	}
-
-	public void setCmdLine(String cmdLine) {
-		this.cmdLine = cmdLine;
-	}
-
-	public int getPollTimeOut() {
-		return pollTimeOut;
-	}
-
-	public void setPollTimeOut(int pollTimeOut) {
-		this.pollTimeOut = pollTimeOut;
-	}
-
-	public int getPoolSize() {
-		return poolSize;
-	}
-
-	public void setPoolSize(int poolSize) {
-		this.poolSize = poolSize;
-	}
-
-	public int getTimeOut() {
-		return timeOut;
-	}
-
-	public void setTimeOut(int timeOut) {
-		this.timeOut = timeOut;
-	}
-
-	public int getStartWait() {
-		return startWait;
-	}
-
-	public void setStartWait(int startWait) {
-		this.startWait = startWait;
-	}
-
-	public int getRestartWait() {
-		return restartWait;
-	}
-
-	public void setRestartWait(int restartWait) {
-		this.restartWait = restartWait;
-	}
-
-	public int getBufSize() {
-		return bufSize;
-	}
-
-	public void setBufSize(int bufSize) {
-		this.bufSize = bufSize;
+		return super.getInstance(SentenceExtractionCommand.class);
 	}
 }

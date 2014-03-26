@@ -19,6 +19,7 @@ package jp.go.nict.wisdom.daemonizer.command;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -41,6 +42,7 @@ public class DaemonizedCommand {
 	private static final String lineSep = System.getProperty("line.separator");
 
 	private String[] cmd;
+	private String dir;
 	private int timeOut;
 	private int startWait;
 	private int restartWait;
@@ -58,24 +60,14 @@ public class DaemonizedCommand {
 	static {
 	}
 
-	public DaemonizedCommand(String cmd, int timeOut, int startWait, int restartwait, int bufSize) {
-		this.cmd = cmd.split(" ");
-		this.timeOut = timeOut;
-		this.startWait = startWait;
-		this.restartWait = restartwait;
-		this.bufSize = bufSize;
-		logger.info("DaemonizedCommand(String cmd, int timeOut, int startWait, int restartwait, int bufSize)");
-		logger.info(cmd);
-		logger.info(timeOut + " : " + startWait + " : " + restartwait + " : " + bufSize);
-	}
-
-	public DaemonizedCommand(String[] cmd, int timeOut, int startWait, int restartwait, int bufSize) {
+	public DaemonizedCommand(String[] cmd, String dir, int timeOut, int startWait, int restartwait, int bufSize) {
 		this.cmd = cmd;
+		this.dir = dir;
 		this.timeOut = timeOut;
 		this.startWait = startWait;
 		this.restartWait = restartwait;
 		this.bufSize = bufSize;
-		logger.info("DaemonizedCommand(String[] cmd, int timeOut, int startWait, int restartwait, int bufSize)");
+		logger.info("DaemonizedCommand(String[] cmd, String dir, int timeOut, int startWait, int restartwait, int bufSize)");
 		String cmdStr = "";
 		for(String s : cmd){
 			cmdStr = cmdStr + " " + s;
@@ -119,8 +111,10 @@ public class DaemonizedCommand {
 	 * @throws IOException Target command not found / Failed to start a process
 	 */
 	public void start() throws IOException {
-//		ProcessBuilder pb = new ProcessBuilder(cmd.split(" "));
 		ProcessBuilder pb = new ProcessBuilder(cmd);
+		if(dir != null){
+			pb.directory(new File(dir));
+		}
 		process = pb.start();
 
 		try {

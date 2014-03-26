@@ -31,8 +31,8 @@ public class FutureAnalysisCommand extends StringIOCommand{
 	private static Logger logger = Logger.getLogger(FutureAnalysisCommand.class.getName());
 	private static final String DELIMITER = "EOS" + System.getProperty("line.separator");
 
-	public FutureAnalysisCommand(String cmd, int timeOut, int startWait, int restartwait, int bufSize) {
-		super(cmd, timeOut, startWait, restartwait, bufSize);
+	public FutureAnalysisCommand(String[] cmd, String dir, String delimiterIn, String delimiterOut, boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartwait, int bufSize) {
+		super(cmd, dir, timeOut, startWait, restartwait, bufSize);
 	}
 
 	public void put(String input) {

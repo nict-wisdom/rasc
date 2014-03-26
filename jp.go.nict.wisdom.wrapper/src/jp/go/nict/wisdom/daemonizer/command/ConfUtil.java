@@ -40,8 +40,8 @@ public class ConfUtil {
 		return port;
 	}
 
-	public String getCommandPath() {
-		return conf.getProperty("path");
+	public String[] getCommandPath() {
+		return new String[]{conf.getProperty("path")};
 	}
 
 	public String getChannelInitializer() {

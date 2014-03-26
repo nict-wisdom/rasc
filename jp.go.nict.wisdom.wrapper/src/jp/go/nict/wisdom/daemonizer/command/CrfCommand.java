@@ -33,8 +33,8 @@ public class CrfCommand extends StringIOCommand{
 	private static final String INPUT_DELIMITER = lineSep + lineSep + "[END_OF_INPUT]" + lineSep; //内部セパレータの改行 + 最終行にデリミタ
 	private static final String DELIMITER = "EOS" + System.getProperty("line.separator");
 
-	public CrfCommand(String cmd, int timeOut, int startWait, int restartwait, int bufSize) {
-		super(cmd, timeOut, startWait, restartwait, bufSize);
+	public CrfCommand(String[] cmd, String dir, String delimiterIn, String delimiterOut, boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartwait, int bufSize) {
+			super(cmd, dir, timeOut, startWait, restartwait, bufSize);
 	}
 
 	public void put(String input) throws IOException{

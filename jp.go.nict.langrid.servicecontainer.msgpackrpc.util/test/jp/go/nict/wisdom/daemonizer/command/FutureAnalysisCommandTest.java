@@ -28,7 +28,7 @@ public class FutureAnalysisCommandTest {
 	@Test
 	public void test() throws InterruptedException, IOException {
 
-		FutureAnalysisCommand cmd = new FutureAnalysisCommand("/opt/PERL/perl-5.16.0-IT-TH-PL/bin/perl -I /Users/mtanaka/dev/ch_scripts/Caus/bin /Users/mtanaka/dev/ch_scripts/Caus/bin/struct-to-feats_daemon.pl -e /Users/mtanaka/dev/ch_scripts/Caus/WISDOM-feat-extr/ei-ns -c /Users/mtanaka/dev/ch_scripts/Caus/WISDOM-feat-extr/jpe-wc", 60000, 1000, 1000, 2000000);
+		FutureAnalysisCommand cmd = new FutureAnalysisCommand(new String[]{"/opt/PERL/perl-5.16.0-IT-TH-PL/bin/perl -I /Users/mtanaka/dev/ch_scripts/Caus/bin /Users/mtanaka/dev/ch_scripts/Caus/bin/struct-to-feats_daemon.pl -e /Users/mtanaka/dev/ch_scripts/Caus/WISDOM-feat-extr/ei-ns -c /Users/mtanaka/dev/ch_scripts/Caus/WISDOM-feat-extr/jpe-wc"}, null, null, null, false, false, 60000, 1000, 1000, 2000000);
 		cmd.start();
 		String html = read("/Users/mtanaka/dev/ch_scripts/Caus/WISDOM-feat-extr/dir-structs/0000018274f29edc7d90345791385af669e25d53_1356884728.struct.xml");
 		cmd.put(html);
