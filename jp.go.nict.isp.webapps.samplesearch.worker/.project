@@ -5,8 +5,6 @@
 	<projects>
 		<project>jp.go.nict.langrid.serviceexecutor.mocks</project>
 		<project>jp.go.nict.isp.wisdom2013.api</project>
-		<project>jp.go.nict.isp.wrapper.wisdom.contrasearch</project>
-		<project>AnalysisResultSearch</project>
 		<project>jp.go.nict.isp.wrapper.wisdom.abstractservice</project>
 	</projects>
 	<buildSpec>

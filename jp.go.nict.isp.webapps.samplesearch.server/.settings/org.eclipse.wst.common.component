@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="jp.go.nict.isp.webapps.ikkyu.worker">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
@@ -127,12 +126,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="jp.go.nict.langrid.service.common_1_2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.service.common_1_2.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="jp.go.nict.isp.wrapper.contrasearch.server.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jp.go.nict.isp.wrapper.contrasearch.server/jp.go.nict.isp.wrapper.contrasearch.server">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/AnalysisResultSearch/AnalysisResultSearch">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jp.go.nict.isp.wrapper.wisdom.abstractservice/jp.go.nict.isp.wrapper.wisdom.abstractservice">

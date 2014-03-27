@@ -17,12 +17,12 @@
 	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.servicecontainer.jar"/>
 	<classpathentry kind="src" path="/jp.go.nict.langrid.client.msgpackrpc"/>
 	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.commons.ws.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0">
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="jst.utility"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java7">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
