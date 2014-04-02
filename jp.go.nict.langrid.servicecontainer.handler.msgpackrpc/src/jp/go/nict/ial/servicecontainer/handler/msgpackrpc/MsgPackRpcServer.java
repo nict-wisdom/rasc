@@ -17,6 +17,7 @@
 
 package jp.go.nict.ial.servicecontainer.handler.msgpackrpc;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -24,6 +25,14 @@ import java.lang.reflect.Proxy;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import jp.go.nict.langrid.commons.ws.LocalServiceContext;
 import jp.go.nict.langrid.commons.ws.ServiceContext;
@@ -36,6 +45,10 @@ import org.msgpack.rpc.ServerEx;
 import org.msgpack.rpc.loop.EventLoop;
 import org.msgpack.rpc.loop.netty.NettyEventLoopFactoryEx;
 import org.msgpack.rpc.reflect.Reflect;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * MessagePackRPC用Handler.<BR>
@@ -108,19 +121,38 @@ public class MsgPackRpcServer {
 		EventLoop.setFactory(new NettyEventLoopFactoryEx());
 		ServerEx server = new ServerEx();
 		try {
+
+			final String servicesPath = loadWebXml(srcPath + "/WEB-INF/web.xml");
+
 			ServiceContext sc = new LocalServiceContext() {
 				@Override
 				public String getRealPath(String path) {
 					return (srcPath != null) ? (srcPath + "/" + path) : path;
 				}
+
+				@Override
+				public String getInitParameter(String param) {
+
+					if (param.equals("servicesPath")) {
+						if (servicesPath != null) {
+							return servicesPath;
+						} else {
+							return super.getInitParameter(param);
+						}
+					}
+
+					return super.getInitParameter(param);
+				}
+
 			};
+
 			ServiceFactory factory =
-				new ServiceLoader(sc).loadServiceFactory(classLoader, serviceName);
-			
-			if(factory == null){
+					new ServiceLoader(sc).loadServiceFactory(classLoader, serviceName);
+
+			if (factory == null) {
 				throw new IOException(String.format("Failed to load service definition (%s). Make sure the path and service name are correct.", serviceName));
 			}
-			
+
 			RIProcessor.start(sc);
 
 			try {
@@ -137,8 +169,62 @@ public class MsgPackRpcServer {
 	}
 
 	/**
+	 * web.xmlが存在する場合には、web.xmlからservicesPathを取得してServiceContextに設定する。
+	 *
+	 * @param sc ServiceContext
+	 */
+	private String loadWebXml(String strPath) {
+		File f = new File(strPath);
+		String servicePath = null;
+
+		System.out.println(strPath);
+		/*存在チェック*/
+		if (!f.exists()) {
+			return null;
+		}
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(false);
+
+		try {
+
+			System.out.println(f.getPath());
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(f);
+			XPathFactory xfactory = XPathFactory.newInstance();
+			XPath xpath = xfactory.newXPath();
+			NodeList nodelist = (NodeList) xpath.evaluate("/web-app/context-param", doc, XPathConstants.NODESET);
+
+			for (int i = 0; i < nodelist.getLength(); i++) {
+				Node node = nodelist.item(i);
+
+				String name = xpath.evaluate("./param-name/text()", node);
+				System.out.println(name);
+				if (name.equals("servicesPath")) {
+					String value = xpath.evaluate("./param-value/text()", node);
+					System.out.println(value);
+					servicePath = value;
+					break;
+				}
+			}
+
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+
+		return servicePath;
+	}
+
+	/**
 	 * サービスを開始する.
-	 * 
+	 *
 	 * @param classLoader クラスローダー
 	 * @param server MsgPackRPCサーバ
 	 * @param factory ServiceFactory

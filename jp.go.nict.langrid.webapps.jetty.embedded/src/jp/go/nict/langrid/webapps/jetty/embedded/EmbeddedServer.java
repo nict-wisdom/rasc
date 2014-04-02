@@ -396,7 +396,8 @@ public class EmbeddedServer {
 						break;
 					}
 					if (je.isDirectory()) {
-						File d = new File(pathRoot + "/" + je.getName().replace("/services/", "/serviceimpl/"));
+//						File d = new File(pathRoot + "/" + je.getName().replace("/services/", "/serviceimpl/"));
+						File d = new File(pathRoot + "/" + je.getName());
 						if (!d.exists()) {
 							d.mkdirs();
 						}
@@ -406,7 +407,8 @@ public class EmbeddedServer {
 						}
 
 					} else {
-						File f = new File(pathRoot + "/" + je.getName().replace("/services/", "/serviceimpl/"));
+//						File f = new File(pathRoot + "/" + je.getName().replace("/services/", "/serviceimpl/"));
+						File f = new File(pathRoot + "/" + je.getName());
 						if (!f.exists()) {
 							/* folder 操作*/
 							String parent = f.getParent();
@@ -569,7 +571,7 @@ public class EmbeddedServer {
 		DeployProp dp = loadJsonfile(argMap.get(KEY_JSONFILE));
 
 		if (dp == null) {
-			System.out.printf("JSONファイル<%s>が不正です。\n");
+			System.out.printf("JSONファイル<%s>が不正です。\n",argMap.get(KEY_JSONFILE));
 			return;
 		}
 
