@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Level;
@@ -585,7 +586,15 @@ public class EmbeddedServer {
 		}
 
 		/* executor */
-		ExecutorService es = Executors.newCachedThreadPool();
+		ExecutorService es = Executors.newCachedThreadPool(new ThreadFactory(){
+
+			// ThreadFactoryでJettyMsgpackThreadを設定する
+			@Override
+			public Thread newThread(Runnable r) {
+				return new JettyMsgpackThread(r);
+			}
+			
+		});
 
 		final Server jetty = (dp.getHttpServices().size() > 0) ? new Server(dp.getJettyPort()) : null;
 		final ArrayList<WebAppContext> wcs = new ArrayList<WebAppContext>();
@@ -665,8 +674,16 @@ public class EmbeddedServer {
 
 					@Override
 					public void run() {
-						Thread.currentThread().setContextClassLoader(cl);
-
+						Thread t = Thread.currentThread();
+						
+						t.setContextClassLoader(cl);
+						
+						//JettyMsgpackThreadの場合には、起動ポートを保存しておく
+						if(t instanceof JettyMsgpackThread){
+							logger.log(Level.INFO, "JettyMsgpackThread");
+							((JettyMsgpackThread)t).setMsgpackPort(port);
+						}
+						
 						try {
 							//JettyMsgpackRPCServiceLoaderImplを経由させてサービスをロードする。
 							Class<?> ldclz = cl.loadClass(JETTY_MSGPACKRPC_SERVICELOADER);
