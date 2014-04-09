@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -591,7 +592,8 @@ public class EmbeddedServer {
 			// ThreadFactoryでJettyMsgpackThreadを設定する
 			@Override
 			public Thread newThread(Runnable r) {
-				return new JettyMsgpackThread(r);
+				
+				return new JettyMsgpackThread(new ThreadGroup(UUID.randomUUID().toString()), r);
 			}
 			
 		});
@@ -682,6 +684,7 @@ public class EmbeddedServer {
 						if(t instanceof JettyMsgpackThread){
 							logger.log(Level.INFO, "JettyMsgpackThread");
 							((JettyMsgpackThread)t).setMsgpackPort(port);
+							
 						}
 						
 						try {
