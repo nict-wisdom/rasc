@@ -592,8 +592,8 @@ public class EmbeddedServer {
 			// ThreadFactoryでJettyMsgpackThreadを設定する
 			@Override
 			public Thread newThread(Runnable r) {
-				
-				return new JettyMsgpackThread(new ThreadGroup(UUID.randomUUID().toString()), r);
+				ThreadGroup grp = new  ThreadGroup(UUID.randomUUID().toString());
+				return new JettyMsgpackThread(grp, r);
 			}
 			
 		});
@@ -677,14 +677,13 @@ public class EmbeddedServer {
 					@Override
 					public void run() {
 						Thread t = Thread.currentThread();
-						
 						t.setContextClassLoader(cl);
 						
 						//JettyMsgpackThreadの場合には、起動ポートを保存しておく
 						if(t instanceof JettyMsgpackThread){
 							logger.log(Level.INFO, "JettyMsgpackThread");
 							((JettyMsgpackThread)t).setMsgpackPort(port);
-							
+							System.setProperty(t.getThreadGroup().getName(), String.valueOf(port));
 						}
 						
 						try {
