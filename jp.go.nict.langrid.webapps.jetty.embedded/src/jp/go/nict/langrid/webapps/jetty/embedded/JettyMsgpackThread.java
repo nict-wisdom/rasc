@@ -28,6 +28,16 @@ package jp.go.nict.langrid.webapps.jetty.embedded;
 public class JettyMsgpackThread extends Thread {
 
 	/**
+	 * コンストラクタ
+	 * @param group ThreadGroup
+	 * @param target Runnable
+	 */
+	public JettyMsgpackThread(ThreadGroup group, Runnable target) {
+		super(group, target);
+		// TODO 自動生成されたコンストラクター・スタブ
+	}
+
+	/**
 	 * msgpack起動ポート番号.
 	 */
 	private int msgpackPort = 0;
