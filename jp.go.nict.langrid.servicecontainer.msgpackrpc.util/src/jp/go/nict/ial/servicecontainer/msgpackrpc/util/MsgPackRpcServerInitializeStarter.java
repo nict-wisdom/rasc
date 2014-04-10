@@ -42,7 +42,7 @@ public class MsgPackRpcServerInitializeStarter {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
+		if(args.length != 2) {
 			System.out.println("Please Set the options.");
 			System.out.println("[ServiceName] [Port]");
 			return;
@@ -72,19 +72,13 @@ public class MsgPackRpcServerInitializeStarter {
 		Thread.sleep(3000);
 
 		MsgPackClientFactory factory = new MsgPackClientFactory();
-		final ServiceInitialize client = factory.create(ServiceInitialize.class, new InetSocketAddress("127.0.0.1",
-				port));
-
-		Future<?> ftInit = exec.submit(new Runnable() {
-			@Override
-			public void run() {
-				client.init();
-			}
-		});
-
-		ftInit.get();
-		System.out.println(String.format("### [%s : %d] Initialized.", serviceName, port));
-
+		try {
+			ServiceInitialize client = factory.create(ServiceInitialize.class, new InetSocketAddress("127.0.0.1", port));
+			client.init();
+			System.out.println(String.format("### [%s : %d] Initialized.", serviceName, port));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		ftStart.get();
 		factory.close();
 		System.out.println(String.format("### [%s : %d] Down.", serviceName, port));
