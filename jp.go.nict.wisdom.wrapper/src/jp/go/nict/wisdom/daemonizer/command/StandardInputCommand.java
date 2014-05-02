@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author mtanaka
  */
-public class StandardInputCommand extends StringIOCommand{
+public class StandardInputCommand extends DaemonizedStringIOCommand {
 
 	private static Logger logger = Logger.getLogger(StandardInputCommand.class.getName());
 

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,8 +37,8 @@ import java.util.logging.Logger;
  *
  * @author mtanaka
  */
-public class DaemonizedCommand {
-	private static Logger logger = Logger.getLogger(DaemonizedCommand.class.getName());
+public abstract class DaemonizedStringIOCommand implements Command<String, String> {
+	private static Logger logger = Logger.getLogger(DaemonizedStringIOCommand.class.getName());
 
 	private static final String lineSep = System.getProperty("line.separator");
 
@@ -56,11 +57,14 @@ public class DaemonizedCommand {
 	private ExecutorService exError;
 
 	private Process process;
+	
+	private LinkedList<String> results = new LinkedList<String>();
+
 
 	static {
 	}
 
-	public DaemonizedCommand(String[] cmd, String dir, int timeOut, int startWait, int restartwait, int bufSize) {
+	public DaemonizedStringIOCommand(String[] cmd, String dir, int timeOut, int startWait, int restartwait, int bufSize) {
 		this.cmd = cmd;
 		this.dir = dir;
 		this.timeOut = timeOut;
@@ -170,6 +174,49 @@ public class DaemonizedCommand {
 		outputQueue.clear();
 	}
 
+	public abstract String getNextResult() throws InterruptedException, IOException;
+
+	public void put(String input) throws IOException{
+		logger.finest("Received input: " + input);
+		doPut(input);
+	}
+
+	protected abstract String getDelimiter();
+	
+	protected String doGetNextResult(boolean includeDelim) throws InterruptedException, IOException {
+		int indexDelim, useBufLen;
+		int delimLen = getDelimiter().length();
+		String serchStr;
+		StringBuffer buf = new StringBuffer();
+		while (results.isEmpty()) {
+			String retCmd = doGetNextResult();
+			if(buf.length() < delimLen){
+				serchStr = buf + retCmd;
+				useBufLen = buf.length();
+			}else{
+				useBufLen = delimLen;
+				serchStr = buf.substring(buf.length() - delimLen) + retCmd;
+			}
+			buf.append(retCmd);
+
+			if ((indexDelim = serchStr.indexOf(getDelimiter())) >= 0) {
+				int resultLength = buf.length() - retCmd.length();
+				if (includeDelim) {
+					resultLength += indexDelim - useBufLen + getDelimiter().length();
+				} else {
+					resultLength += indexDelim - useBufLen;
+				}
+				String retStr = buf.substring(0, resultLength);
+				results.add(retStr);
+			}
+		}
+		String result = results.getFirst();
+		results.removeFirst();
+		logger.finest("Returning output: " + result);
+
+		return result;
+	}
+
 	/**
 	 * Worker thread writing input to the stdin of the program.
 	 *
@@ -246,5 +293,4 @@ public class DaemonizedCommand {
 			logger.config("ErrorWorker : " + Thread.currentThread().getName() + " Stop");
 		}
 	}
-
 }

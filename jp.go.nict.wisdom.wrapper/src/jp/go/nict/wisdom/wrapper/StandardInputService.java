@@ -20,8 +20,9 @@ package jp.go.nict.wisdom.wrapper;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import jp.go.nict.wisdom.daemonizer.command.Command;
+import jp.go.nict.wisdom.daemonizer.command.CommandPool;
 import jp.go.nict.wisdom.daemonizer.command.StandardInputCommand;
-import jp.go.nict.wisdom.daemonizer.command.StringIOCommand;
 
 public class StandardInputService extends AbstractTextAnalysisService {
 	private static Logger logger = Logger.getLogger(StandardInputService.class.getName());
@@ -29,9 +30,16 @@ public class StandardInputService extends AbstractTextAnalysisService {
 	public StandardInputService() {
 		logger.info("new StandardInputService()");
 	}
-
+	
 	@Override
-	protected StringIOCommand getInstance() throws IOException, InterruptedException {
-		return super.getInstance(StandardInputCommand.class);
+	public void init() {
+		impl = new TextAnalysisServiceImpl(new CommandPool<String, String>(
+				cmdLine, cmdArray, directory, delimiterIn, delimiterOut, 
+				delLastNewline, includeDelim, timeOut, startWait, restartWait, 
+				bufSize, pollTimeOut, poolSize, initPoolSize) {
+			public Command<String, String> getInstance() throws IOException, InterruptedException {
+				return getInstance(StandardInputCommand.class);
+			}
+		});
 	}
 }
