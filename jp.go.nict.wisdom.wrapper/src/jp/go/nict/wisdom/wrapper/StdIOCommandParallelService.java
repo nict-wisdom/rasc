@@ -23,10 +23,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-public class StandardInputParallelService extends StandardInputService {
-	private static Logger logger = Logger.getLogger(StandardInputParallelService.class.getName());
+public class StdIOCommandParallelService extends StdIOCommandService {
+	private static Logger logger = Logger.getLogger(StdIOCommandParallelService.class.getName());
 
-	public StandardInputParallelService() {
+	public StdIOCommandParallelService() {
 		logger.info("new StandardInputParallelService()");
 	}
 

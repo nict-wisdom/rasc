@@ -24,10 +24,10 @@ import jp.go.nict.wisdom.daemonizer.command.Command;
 import jp.go.nict.wisdom.daemonizer.command.CommandPool;
 import jp.go.nict.wisdom.daemonizer.command.StandardInputCommand;
 
-public class StandardInputService extends AbstractTextAnalysisService {
-	private static Logger logger = Logger.getLogger(StandardInputService.class.getName());
+public class StdIOCommandService extends AbstractTextAnalysisService {
+	private static Logger logger = Logger.getLogger(StdIOCommandService.class.getName());
 
-	public StandardInputService() {
+	public StdIOCommandService() {
 		logger.info("new StandardInputService()");
 	}
 	

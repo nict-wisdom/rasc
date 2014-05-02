@@ -24,10 +24,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public class StandardInputParallelArrayService extends StandardInputService {
-	private static Logger logger = Logger.getLogger(StandardInputParallelArrayService.class.getName());
+public class StdIOCommandParallelArrayService extends StdIOCommandService {
+	private static Logger logger = Logger.getLogger(StdIOCommandParallelArrayService.class.getName());
 
-	public StandardInputParallelArrayService() {
+	public StdIOCommandParallelArrayService() {
 		logger.info("new StandardInputArrayParallelService()");
 	}
 

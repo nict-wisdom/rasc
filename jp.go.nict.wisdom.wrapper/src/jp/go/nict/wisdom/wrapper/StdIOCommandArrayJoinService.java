@@ -19,14 +19,14 @@ package jp.go.nict.wisdom.wrapper;
 
 import java.util.logging.Logger;
 
-public class StandardInputArrayJoinService extends StandardInputService {
-	private static Logger logger = Logger.getLogger(StandardInputArrayJoinService.class.getName());
+public class StdIOCommandArrayJoinService extends StdIOCommandService {
+	private static Logger logger = Logger.getLogger(StdIOCommandArrayJoinService.class.getName());
 
 	private String internalDelimiterIn = "";
 	private String internalDelimiterOut;
 	private boolean includeInternalDelim = false;
 
-	public StandardInputArrayJoinService() {
+	public StdIOCommandArrayJoinService() {
 		logger.info("new StandardInputArrayJoinService()");
 	}
 

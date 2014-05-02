@@ -66,8 +66,9 @@ public abstract class CommandPool<I, O> {
 	public Command<I, O> getInstance(Class<? extends Command<I, O>> cmdClass) throws IOException, InterruptedException {
 		logger.info("getInstance(...)");
 		if(cmdLine != null && cmdArray != null){
-			logger.severe("Both cmdLine and CmdArray is set. Set either one.");
-			throw new IOException("Both cmdLine and CmdArray is set. Set either one.");
+			String msg = "Both cmdLine and cmdArray are set. Set only one of them.";
+			logger.severe(msg);
+			throw new IOException(msg);
 		}
 		String[] exeCmd;
 		if(cmdLine != null)

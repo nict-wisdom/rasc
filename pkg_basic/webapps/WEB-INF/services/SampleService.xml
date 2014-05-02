@@ -4,7 +4,7 @@
 	<bean id="target"
 		class="jp.go.nict.langrid.servicecontainer.handler.TargetServiceFactory">
 		<property name="service">
-			<bean class="jp.go.nict.wisdom.wrapper.StandardInputService">
+			<bean class="jp.go.nict.wisdom.wrapper.StdIOCommandService">
 				<property name="cmdLine" value="___PATH_TO_PROGRAM___" />
 				<property name="delimiterIn" value="\n" />
 				<property name="delimiterOut" value="EOS\n" />
