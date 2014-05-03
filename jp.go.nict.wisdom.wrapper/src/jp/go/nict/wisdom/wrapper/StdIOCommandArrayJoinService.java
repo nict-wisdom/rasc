@@ -76,7 +76,6 @@ public class StdIOCommandArrayJoinService extends StdIOCommandService {
 			}
 		}
 
-
 		return retArray;
 	}
 

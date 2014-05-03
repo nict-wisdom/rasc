@@ -30,16 +30,17 @@ public class StdIOCommandService extends AbstractTextAnalysisService {
 	public StdIOCommandService() {
 		logger.info("new StandardInputService()");
 	}
-	
+
 	@Override
 	public void init() {
 		impl = new TextAnalysisServiceImpl(new CommandPool<String, String>(
-				cmdLine, cmdArray, directory, delimiterIn, delimiterOut, 
-				delLastNewline, includeDelim, timeOut, startWait, restartWait, 
+				cmdLine, cmdArray, directory, delimiterIn, delimiterOut,
+				delLastNewline, includeDelim, timeOut, startWait, restartWait,
 				bufSize, pollTimeOut, poolSize, initPoolSize) {
 			public Command<String, String> getInstance() throws IOException, InterruptedException {
 				return getInstance(StandardInputCommand.class);
 			}
 		});
+		super.init();
 	}
 }

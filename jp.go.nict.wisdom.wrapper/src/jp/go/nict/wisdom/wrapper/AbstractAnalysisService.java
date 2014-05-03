@@ -25,7 +25,7 @@ import jp.go.nict.wisdom.wrapper.status.ServiceStatus;
 
 public abstract class AbstractAnalysisService implements ServiceStatus, ServiceInitialize {
 	private static Logger logger = Logger.getLogger(AbstractAnalysisService.class.getName());
-	
+
 	protected String cmdLine;
 	protected List<String> cmdArray;
 	protected int poolSize = 10;
@@ -42,7 +42,7 @@ public abstract class AbstractAnalysisService implements ServiceStatus, ServiceI
 	protected int restartWait = 1000;
 	protected int bufSize = 2000000;
 	protected int pollTimeOut = 3000;
-	
+
 	public AbstractAnalysisService() {
 		logger.info("new AbstractAnalysisService()");
 	}

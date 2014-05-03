@@ -24,15 +24,15 @@ import jp.go.nict.wisdom.wrapper.api.TextAnalysisService;
 public abstract class AbstractTextAnalysisService
 		extends AbstractAnalysisService
 		implements TextAnalysisService {
-	
+
 	private static Logger logger = Logger.getLogger(AbstractTextAnalysisService.class.getName());
 
 	protected TextAnalysisServiceImpl impl;
-	
+
 	public AbstractTextAnalysisService() {
 		logger.info("new AbstractTextAnalysisService()");
 	}
-	
+
 	@Override
 	public String analyze(String text) throws Exception {
 		return impl.analyze(text);
@@ -42,7 +42,12 @@ public abstract class AbstractTextAnalysisService
 	public String[] analyzeArray(String[] text) throws Exception {
 		 return impl.analyzeArray(text);
 	}
-	
+
+	@Override
+	public void init() {
+		impl.init();
+	}
+
 	@Override
 	public String getStatus() {
 		return impl.getStatus();
