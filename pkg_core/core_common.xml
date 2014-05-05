@@ -65,7 +65,7 @@
 	  <path refid="msgpack-java.lib" />
 	  <path refid="msgpack-rpc-java.lib" />
 	  <path refid="rasc.lib" />
-	  <fileset dir="build" includes="**/*.jar" />
+	  <fileset dir="${rasc_core.build}" includes="**/*.jar" />
 	  <cplist />
 	</classpath>
       </javac>
