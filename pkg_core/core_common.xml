@@ -4,7 +4,6 @@
   <property environment="env"/>
   <fail unless="env.RASC_VERSION" message="Env variable &quot;RASC_VERSION&quot; needs to be set."/>
   <property name="version" value="${env.RASC_VERSION}"/>
-  <property name="package_name" value="rasc-core-${version}"/>
 
   <property name="rasc.path" value="${rasc_core.path}/.." />
   <property name="msgpack-java.path" value="${rasc.path}/msgpack-java/" />
