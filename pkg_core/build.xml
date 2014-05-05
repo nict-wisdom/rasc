@@ -22,26 +22,32 @@
   </target>
 
   <target name="jp.go.nict.langrid.client.msgpackrpc" depends="msgpack-rpc-java">
-    <build-jar project.name="jp.go.nict.langrid.client.msgpackrpc" src.dir="../jp.go.nict.langrid.client.msgpackrpc/src" dest.dir="build" />
+    <build-jar project.name="jp.go.nict.langrid.client.msgpackrpc" src.dir="${rasc.path}/jp.go.nict.langrid.client.msgpackrpc/src" dest.dir="build" />
   </target>
 
   <target name="jp.go.nict.wisdom.wrapper.api" depends="jp.go.nict.langrid.client.msgpackrpc">
-    <build-jar project.name="jp.go.nict.wisdom.wrapper.api" src.dir="../jp.go.nict.wisdom.wrapper.api/src" dest.dir="build" />
+    <build-jar project.name="jp.go.nict.wisdom.wrapper.api" src.dir="${rasc.path}/jp.go.nict.wisdom.wrapper.api/src" dest.dir="build" />
   </target>
 
   <target name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" depends="jp.go.nict.wisdom.wrapper.api">
-    <build-jar project.name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" src.dir="../jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" dest.dir="build" />
+    <build-jar project.name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" src.dir="${rasc.path}/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" dest.dir="build" />
   </target>
 
   <target name="jp.go.nict.langrid.servicecontainer.msgpackrpc.util" depends="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc">
-    <build-jar project.name="jp.go.nict.langrid.servicecontainer.msgpackrpc.util" src.dir="../jp.go.nict.langrid.servicecontainer.msgpackrpc.util/src" dest.dir="build" />
+    <build-jar project.name="jp.go.nict.langrid.servicecontainer.msgpackrpc.util" src.dir="${rasc.path}/jp.go.nict.langrid.servicecontainer.msgpackrpc.util/src" dest.dir="build" />
   </target>
 
   <target name="jp.go.nict.wisdom.wrapper" depends="jp.go.nict.langrid.servicecontainer.msgpackrpc.util">
-    <build-jar project.name="jp.go.nict.wisdom.wrapper" src.dir="../jp.go.nict.wisdom.wrapper/src" dest.dir="build" />
+    <build-jar project.name="jp.go.nict.wisdom.wrapper" src.dir="${rasc.path}/jp.go.nict.wisdom.wrapper/src" dest.dir="build" />
   </target>
 
-  <target name="package" depends="jp.go.nict.wisdom.wrapper">
+  <target name="jp.go.nict.ial.servicecontainer.fluentd" depends="jp.go.nict.wisdom.wrapper">
+    <build-jar project.name="jp.go.nict.ial.servicecontainer.fluentd" src.dir="${rasc.path}/jp.go.nict.ial.servicecontainer.fluentd/src" dest.dir="build" />
+  </target>
+
+  <target name="build_core" depends="jp.go.nict.ial.servicecontainer.fluentd" />
+
+  <target name="package" depends="build_core">
     <mkdir dir="build/jar" />
 
     <!-- Copy jars -->
@@ -60,7 +66,7 @@
     <copy file="./sample/SampleClient.java" tofile="build/jar/SampleClient.java" />
     <copy file="./sample/server.sh" tofile="build/jar/server.sh"/>
 
-    <!-- パッケージファイル作成 -->
+    <!-- Packaging -->
     <mkdir dir="./dist" />
     <zip destfile="dist/${package_name}.zip"
 	 update="true"
