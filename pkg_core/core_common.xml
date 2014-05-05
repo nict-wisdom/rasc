@@ -1,0 +1,78 @@
+<project name="core_properties" basedir=".">
+  <dirname property="rasc_core.path" file="${ant.file.imported}"/>
+
+  <property environment="env"/>
+  <fail unless="env.RASC_VERSION" message="Env variable &quot;RASC_VERSION&quot; needs to be set."/>
+  <property name="version" value="${env.RASC_VERSION}"/>
+  <property name="package_name" value="rasc-core-${version}"/>
+
+  <property name="rasc.path" value="${rasc_core.path}/.." />
+  <property name="msgpack-java.path" value="${rasc.path}/msgpack-java/" />
+  <property name="msgpack-rpc-java.path" value="${rasc.path}/msgpack-rpc-java/" />
+  <property name="rasc.lib" value="${rasc.path}/jp.go.nict.isp.wisdom2013.lib/" />
+
+  <!-- class path for msgpack-java -->
+  <path id="msgpack-java.lib">
+    <fileset dir="${msgpack-java.path}/lib">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+
+  <!-- class path for msgpack-rpc-java -->
+  <path id="msgpack-rpc-java.lib">
+    <pathelement location="${msgpack-rpc-java.path}/lib/slf4j-jdk14-1.5.8.jar" />
+    <pathelement location="${msgpack-rpc-java.path}/lib/log4j-1.2.15.jar" />
+    <pathelement location="${msgpack-rpc-java.path}/lib/netty-3.6.6.Final.jar" />
+    <pathelement location="${msgpack-rpc-java.path}/lib/slf4j-api-1.5.8.jar" />
+  </path>
+
+  <path id="rasc.lib">
+    <fileset dir="${rasc.lib}/lib/axis/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/common/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/google/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/langrid/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/opensymphony/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/spring/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/tomcat6/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/trie4j/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/ws/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/json/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/jettymsgpack/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/mustache/" includes="**/*.jar" />
+  </path>
+
+  <path id="rasc_core.classpath">
+    <fileset dir="build/" includes="*.jar" />
+    <path refid="msgpack-java.lib" />
+    <path refid="msgpack-rpc-java.lib" />
+    <path refid="rasc.lib" />
+  </path>
+
+  <macrodef name="build-jar">
+    <attribute name="project.name" />
+    <attribute name="src.dir" />
+    <attribute name="dest.dir" />
+    <element name="cplist" optional="yes" />
+    <sequential>
+      <echo>************************************************************************ </echo>
+      <echo>build... @{project.name}</echo>
+      <echo>************************************************************************ </echo>
+      <mkdir dir="@{dest.dir}/@{project.name}" />
+      <javac destdir="@{dest.dir}/@{project.name}" encoding="UTF-8" includeantruntime="false" debug="true">
+	<src path="@{src.dir}" />
+	<classpath>
+	  <path refid="msgpack-java.lib" />
+	  <path refid="msgpack-rpc-java.lib" />
+	  <path refid="rasc.lib" />
+	  <fileset dir="build" includes="**/*.jar" />
+	  <cplist />
+	</classpath>
+      </javac>
+      <jar jarfile="@{dest.dir}/@{project.name}.jar">
+	<fileset dir="@{dest.dir}/@{project.name}" includes="**/*.class" />
+	<fileset dir="@{src.dir}" includes="**/*.java" />
+      </jar>
+    </sequential>
+  </macrodef>
+</project>
+
