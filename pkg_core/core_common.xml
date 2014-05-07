@@ -20,10 +20,9 @@
 
   <!-- class path for msgpack-rpc-java -->
   <path id="msgpack-rpc-java.lib">
-    <pathelement location="${msgpack-rpc-java.path}/lib/slf4j-jdk14-1.5.8.jar" />
-    <pathelement location="${msgpack-rpc-java.path}/lib/log4j-1.2.15.jar" />
-    <pathelement location="${msgpack-rpc-java.path}/lib/netty-3.6.6.Final.jar" />
-    <pathelement location="${msgpack-rpc-java.path}/lib/slf4j-api-1.5.8.jar" />
+    <fileset dir="${msgpack-rpc-java.path}/lib">
+      <include name="*.jar" />
+    </fileset>
   </path>
 
   <path id="rasc.lib">

@@ -1,36 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="rasc_release" default="package">
-
+<project name="rasc_basic" default="package">
+  <dirname property="rasc_basic.path" file="${ant.file.rasc_basic}"/>
+  <property name="rasc_basic.build" value="${rasc_basic.path}/build"/>
   <property environment="env"/>
 
   <fail unless="env.RASC_VERSION" message="Env variable &quot;RASC_VERSION&quot; needs to be set."/>
   <property name="version" value="${env.RASC_VERSION}"/>
 
-  <property name="package_name" value="rasc-basic-${version}"/>
-<!--
-  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
--->
-  <path id="all.wisdom2013">
-    <fileset dir="../jp.go.nict.isp.wisdom2013.lib">
-      <include name="**/*.jar"/>
-    </fileset>
-    <pathelement location="build/msgpack-java.jar" />
-    <pathelement location="build/msgpack-rpc-java.jar" />
-  </path>
+  <property name="package_name" value="rasc-basic-${version}" />
+  <import file="../pkg_core/core_common.xml" />
 
-  <path id="msgpack-java.lib">
-    <fileset dir="../msgpack-java/lib">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-  
-  <path id="msgpack-rpc-java.lib">
-    <pathelement location="../msgpack-rpc-java/lib/slf4j-jdk14-1.5.8.jar" />
-    <pathelement location="../msgpack-rpc-java/lib/log4j-1.2.15.jar" />
-    <pathelement location="../msgpack-rpc-java/lib/netty-3.6.6.Final.jar" />
-    <pathelement location="../msgpack-rpc-java/lib/slf4j-api-1.5.8.jar" />
-  </path>
-  
   <target name="init">
     <mkdir dir="build" />
   </target>
@@ -40,160 +19,83 @@
     <delete dir="dist"/>
   </target>
 
-  <target name="msgpack-java" depends="init">
-    <mkdir dir="build/msgpack-java" />
-    <javac destdir="build/msgpack-java" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="../msgpack-java/src/main" />
-      <classpath>
-	<path refid="msgpack-java.lib" />
-      </classpath>
-    </javac>
-    <jar jarfile="build/msgpack-java.jar" >
-      <fileset dir="build/msgpack-java" includes="**/*.class" />
-      <fileset dir="../msgpack-java/src/main" includes="**/*.java" />
-    </jar>
+  <target name="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" depends="init">
+    <ant antfile="../../rasc/pkg_core/build.xml" target="build_core" />
+    <build-jar project.name="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" src.dir="${rasc.path}/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc/src" dest.dir="build">
+      <cplist>
+	<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib" includes="**/*.jar" />
+      </cplist>
+    </build-jar>
   </target>
 
-  <target name="msgpack-rpc-java" depends="msgpack-java">
-    <mkdir dir="build/msgpack-rpc-java" />
-    <javac destdir="build/msgpack-rpc-java" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="../msgpack-rpc-java/src/main" />
+  <!-- jetty compile -->
+  <target name="jetty" depends="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc">
+    <mkdir dir="build/jp.go.nict.langrid.webapps.jetty.embedded" />
+    <javac destdir="build/jp.go.nict.langrid.webapps.jetty.embedded" encoding="UTF-8" includeantruntime="false" debug="true">
+      <src path="${rasc.path}/jp.go.nict.langrid.webapps.jetty.embedded/src" />
       <classpath>
-	<path refid="msgpack-java.lib" />
-	<path refid="msgpack-rpc-java.lib" />
-	<pathelement location="build/msgpack-java.jar" />
+  	<fileset dir="${rasc.lib}/lib/jetty9/" includes="**/*.jar" />
+  	<fileset file="${rasc.lib}/lib/jettymsgpack/jp.go.nict.ial.jetty.msgpackrpc.serviceloader.api.jar" />
+  	<fileset file="${rasc.lib}/lib/json/jsonic-1.3.0.jar" />
       </classpath>
     </javac>
-    <jar jarfile="build/msgpack-rpc-java.jar" >
-      <fileset dir="build/msgpack-rpc-java" includes="**/*.class" />
-      <fileset dir="../msgpack-rpc-java/src/main" includes="**/*.java" />
+    <unzip src="${rasc.lib}/lib/eclipse/jar-in-jar-loader.zip" dest="build/jp.go.nict.langrid.webapps.jetty.embedded" />
+    <path id="jetty.libpath">
+      <pathelement location="${rasc.lib}/lib" />
+    </path>
+    <pathconvert property="jetty.pathinfo" refid="jetty.libpath" pathsep=" " targetos="unix" />
+    <path id="jetty.jars">
+      <fileset file="${rasc.lib}/lib/json/jsonic-1.3.0.jar" />
+      <fileset dir="${rasc.lib}/lib/jetty9/" includes="**/*.jar" />
+    </path>
+    <pathconvert property="jetty.clspath" pathsep=" " targetos="unix" refid="jetty.jars">
+      <map from="${jetty.pathinfo}/json/" to="" />
+      <map from="${jetty.pathinfo}/jetty9/" to="" />
+    </pathconvert>
+    <jar jarfile="build/embeddedserver.jar">
+      <fileset dir="build/jp.go.nict.langrid.webapps.jetty.embedded" includes="**/*.class" />
+      <fileset dir="${rasc.path}/jp.go.nict.langrid.webapps.jetty.embedded/src" includes="**/*.java" />
+      <fileset file="${rasc.lib}/lib/json/jsonic-1.3.0.jar" />
+      <fileset dir="${rasc.lib}/lib/jetty9/" includes="**/*.jar" />
+      <manifest>
+  	<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
+  	<attribute name="Rsrc-Main-Class" value="jp.go.nict.langrid.webapps.jetty.embedded.EmbeddedServer" />
+  	<attribute name="Class-Path" value="." />
+  	<attribute name="Rsrc-Class-Path" value="./ ${jetty.clspath} " />
+      </manifest>
     </jar>
+    <!-- <mkdir dir="build/deploy/jp.go.nict.langrid.webapps.jetty.embedded/jar" /> -->
+    <!-- <copy file="build/embeddedserver.jar" tofile="build/deploy/jp.go.nict.langrid.webapps.jetty.embedded/jar/embeddedserver.jar" />  -->
   </target>
 
-  <target name="msgpack-rpc-client" depends="msgpack-rpc-java">
-    <mkdir dir="build/msgpack-rpc-client" />
-    <javac destdir="build/msgpack-rpc-client" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="../jp.go.nict.langrid.client.msgpackrpc/src" />
-      <classpath>
-	<path refid="all.wisdom2013"/>
-      </classpath>
-    </javac>
-    <jar jarfile="build/msgpack-rpc-client.jar" >
-      <fileset dir="build/msgpack-rpc-client" includes="**/*.class" />
-      <fileset dir="../jp.go.nict.langrid.client.msgpackrpc/src" includes="**/*.java" />
-    </jar>
-  </target>
+  <!-- chmod for scripts -->
+  <!-- <target name="chmod.scripts" depends="jetty"> -->
+  <!--   <chmod dir="build/deploy/jp.go.nict.langrid.webapps.jetty.embedded/scripts/" perm="777" includes="**/*.sh" /> -->
+  <!-- </target> -->
 
-  <target name="jp.go.nict.langrid.client.msgpackrpc" depends="msgpack-rpc-client">
-    <mkdir dir="build/jp.go.nict.langrid.client.msgpackrpc" />
-    <javac destdir="build/jp.go.nict.langrid.client.msgpackrpc" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="../jp.go.nict.langrid.client.msgpackrpc/src" />
-      <classpath>
-	<path refid="all.wisdom2013"/>
-      </classpath>
-    </javac>
-    <jar jarfile="build/jp.go.nict.langrid.client.msgpackrpc.jar" >
-      <fileset dir="build/jp.go.nict.langrid.client.msgpackrpc" includes="**/*.class" />
-      <fileset dir="../jp.go.nict.langrid.client.msgpackrpc/src" includes="**/*.java" />
-    </jar>
-  </target>
+  <path id="rasc_basic.classpath">
+    <fileset dir="${rasc_basic.build}" includes="*.jar" />
+    <path refid="rasc_core.classpath" />
+  </path>
 
-  <target name="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" depends="jp.go.nict.langrid.client.msgpackrpc">
-    <mkdir dir="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" />
-    <javac destdir="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="../jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc/src" />
-      <classpath>
-	<path refid="all.wisdom2013"/>
-      </classpath>
-    </javac>
-    <jar jarfile="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc.jar" >
-      <fileset dir="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" includes="**/*.class" />
-      <fileset dir="../jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc/src" includes="**/*.java" />
-    </jar>
-  </target>
+  <echo message="aaa" />
+  <echo message="${rasc.path}" />
+  <echo message="${rasc_basic.path}" />
+  <echo message="${rasc_basic.build}" />
+  <echo message="${msgpack-rpc-java.path}" />
+  <echo message="aaabb" />
 
-  <target name="wrapper-api" depends="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc">
-    <mkdir dir="build/wrapper-api" />
-    <javac destdir="build/wrapper-api" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="../jp.go.nict.wisdom.wrapper.api/src" />
-      <classpath>
-	<path refid="all.wisdom2013"/>
-      </classpath>
-    </javac>
-    <jar jarfile="build/wrapper-api.jar" >
-      <fileset dir="build/wrapper-api" includes="**/*.class" />
-      <fileset dir="../jp.go.nict.wisdom.wrapper.api/src" includes="**/*.java" />
-    </jar>
-  </target>
-
-  <target name="msgpackrpc-handler" depends="wrapper-api">
-    <mkdir dir="build/msgpackrpc-handler" />
-    <javac destdir="build/msgpackrpc-handler" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="../jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" />
-      <classpath>
-	<path refid="all.wisdom2013"/>
-	<path refid="msgpack-java.lib" />
-	<path refid="msgpack-rpc-java.lib" />
-	<pathelement location="build/wrapper-api.jar" />
-	<pathelement location="build/msgpack-rpc-client.jar" />
-      </classpath>
-    </javac>
-    <jar jarfile="build/msgpackrpc-handler.jar" >
-      <fileset dir="build/msgpackrpc-handler" includes="**/*.class" />
-      <fileset dir="../jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" includes="**/*.java" />
-    </jar>
-  </target>
-
-  <target name="wrapper" depends="msgpackrpc-handler">
-    <mkdir dir="build/wrapper" />
-    <javac destdir="build/wrapper" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="../jp.go.nict.wisdom.wrapper/src" />
-      <classpath>
-	<path refid="all.wisdom2013"/>
-	<pathelement location="build/wrapper-api.jar" />
-      </classpath>
-    </javac>
-    <jar jarfile="build/wrapper.jar" >
-      <fileset dir="build/wrapper" includes="**/*.class" />
-      <fileset dir="../jp.go.nict.wisdom.wrapper/src" includes="**/*.java" />
-    </jar>
-  </target>
-
-  <target name="package" depends="wrapper">
+  <target name="package" depends="jetty">
     <mkdir dir="build" />
     <mkdir dir="build/jar" />
 
     <property name="war_name01" value="jp.go.nict.wisdom.webapps.mecabservice"/>
 
     <copy todir="build/jar">
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/axis/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/common/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/google/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/langrid/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/opensymphony/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/spring/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/tomcat6/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/trie4j/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/ws/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/json/" includes="**/*.*" />
-      <fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib/jettymsgpack/" includes="**/*.*" />
-      <fileset  dir="../msgpack-java/lib/" includes="**/*.*" />
-	<!--			<file file="build/jp.go.nict.isp.wisdom2013.api.jar" /> -->
-	<!--			<file file="build/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" /> -->
-	<!--			<file file="build/jp.go.nict.isp.wisdom2013.plugin.jar" /> -->
-	<file file="build/wrapper-api.jar" />
-	<file file="build/jp.go.nict.langrid.client.msgpackrpc.jar" />
-	<file file="build/msgpack-java.jar" />
-	<file file="build/msgpackrpc-handler.jar" />
-	<file file="build/msgpack-rpc-java.jar" />
-	<file file="../msgpack-rpc-java/lib/slf4j-jdk14-1.5.8.jar" />
-	<file file="../msgpack-rpc-java/lib/log4j-1.2.15.jar" />
-	<file file="../msgpack-rpc-java/lib/netty-3.6.6.Final.jar" />
-	<file file="../msgpack-rpc-java/lib/slf4j-api-1.5.8.jar" />
-	<file file="../msgpack-rpc-java/lib/slf4j-LICENSE.txt" />
-	<file file="../msgpack-rpc-java/lib/netty-LICENSE.txt" />
-	<file file="../msgpack-rpc-java/lib/log4j-LICENSE.txt" />
-	<!-- <file file="build/wrapper.jar" /> -->
+      <path refid="rasc_basic.classpath" />
+      <file file="../msgpack-rpc-java/lib/slf4j-LICENSE.txt" />
+      <file file="../msgpack-rpc-java/lib/netty-LICENSE.txt" />
+      <file file="../msgpack-rpc-java/lib/log4j-LICENSE.txt" />
     </copy>
 
     <mkdir dir="dist" />
@@ -201,12 +103,12 @@
 	 update="true"
 	 preserve0permissions="true" >
       <zipfileset dir="build/jar" prefix="${package_name}/lib"/>
-      <zipfileset dir="../jp.go.nict.langrid.webapps.jetty.embedded/jar" includes="embeddedserver.jar" prefix="${package_name}/lib"/>
+      <!-- <zipfileset dir="../jp.go.nict.langrid.webapps.jetty.embedded/jar" includes="embeddedserver.jar" prefix="${package_name}/lib"/> -->
       <zipfileset dir="../msgpack-java/" includes="LICENSE.txt" fullpath="${package_name}/lib/msgpack-java.LICENSE.txt"/>
       <zipfileset dir="../msgpack-rpc-java/" includes="LICENSE.txt" fullpath="${package_name}/lib/msgpack-rpc-java.LICENSE.txt"/>
       <zipfileset dir="webapps" prefix="${package_name}/webapps"/>
       <zipfileset dir="script" prefix="${package_name}/script"/>
-      <zipfileset dir="../jp.go.nict.wisdom.wrapper" prefix="${package_name}/jp.go.nict.wisdom.wrapper"/>
+      <!-- <zipfileset dir="../jp.go.nict.wisdom.wrapper" prefix="${package_name}/jp.go.nict.wisdom.wrapper"/> -->
       <zipfileset dir="." includes="build_sub.xml" fullpath="${package_name}/build.xml"/>
     </zip>
   </target>

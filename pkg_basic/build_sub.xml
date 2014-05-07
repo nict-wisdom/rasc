@@ -9,21 +9,7 @@
     <delete dir="build"/>
   </target>
 
-  <target name="wrapper" depends="init">
-    <mkdir dir="build/wrapper" />
-    <javac destdir="build/wrapper" encoding="UTF-8" includeantruntime="false" debug="true">
-      <src path="jp.go.nict.wisdom.wrapper/src" />
-      <classpath>
-	<fileset dir="lib" includes="*.jar" />
-      </classpath>
-    </javac>
-    <jar jarfile="build/wrapper.jar" >
-      <fileset dir="build/wrapper" includes="**/*.class" />
-      <fileset dir="jp.go.nict.wisdom.wrapper/src" includes="**/*.java" />
-    </jar>
-  </target>
-
-  <target name="war" depends="wrapper">
+  <target name="war" depends="init">
     <property name="war_name" value="___WAR_NAME___"/>
 
     <war destfile="build/${war_name}.war" webxml="webapps/WEB-INF/web.xml">
