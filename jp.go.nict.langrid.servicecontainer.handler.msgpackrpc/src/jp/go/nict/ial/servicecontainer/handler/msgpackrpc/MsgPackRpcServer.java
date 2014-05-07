@@ -40,6 +40,7 @@ import jp.go.nict.langrid.servicecontainer.handler.RIProcessor;
 import jp.go.nict.langrid.servicecontainer.handler.ServiceFactory;
 import jp.go.nict.langrid.servicecontainer.handler.ServiceLoader;
 
+import org.msgpack.rpc.RequestEx;
 import org.msgpack.rpc.Server;
 import org.msgpack.rpc.ServerEx;
 import org.msgpack.rpc.loop.EventLoop;
@@ -152,6 +153,8 @@ public class MsgPackRpcServer {
 			if (factory == null) {
 				throw new IOException(String.format("Failed to load service definition (%s). Make sure the path and service name are correct.", serviceName));
 			}
+			
+			
 
 			RIProcessor.start(sc);
 
@@ -259,6 +262,29 @@ public class MsgPackRpcServer {
 								}
 							}
 						}), methods.toArray(new Method[] {}));
+		
+		/* 初期化(init)を呼んで見る <TEST> */
+		/* この時点で、serviceとMethodDispatcherが生成されているので、基本的にはサービスを呼び出し可能なはず*/
+		boolean hasServiceInitialize = false;
+		
+		for(Class<?> clsIf : factory.getInterfaces()){
+			if(clsIf.getName().equals("jp.go.nict.wisdom.wrapper.status.ServiceInitialize")){
+				for(Method m : clsIf.getMethods()){
+					if(m.getName().equals("init")){
+						hasServiceInitialize = true;
+					}
+				}
+				break;
+			}
+		}
+		if(hasServiceInitialize){
+			try {
+				dp.dispatch(new RequestEx("init",null));
+			} catch (Exception e) {
+				; //何もしない
+			}
+		}
+		
 		server.serve(dp);
 	}
 }
