@@ -46,6 +46,7 @@ import org.msgpack.rpc.ServerEx;
 import org.msgpack.rpc.loop.EventLoop;
 import org.msgpack.rpc.loop.netty.NettyEventLoopFactoryEx;
 import org.msgpack.rpc.reflect.Reflect;
+import org.msgpack.type.ValueFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -117,7 +118,8 @@ public class MsgPackRpcServer {
 	 * @throws IOException 
 	 * @throws InterruptedException 
 	 */
-	public void start(String serviceName, int port, final String srcPath, final ClassLoader classLoader) throws UnknownHostException, IOException, InterruptedException {
+	public void start(String serviceName, int port, final String srcPath, final ClassLoader classLoader)
+			throws UnknownHostException, IOException, InterruptedException {
 
 		EventLoop.setFactory(new NettyEventLoopFactoryEx());
 		ServerEx server = new ServerEx();
@@ -151,10 +153,10 @@ public class MsgPackRpcServer {
 					new ServiceLoader(sc).loadServiceFactory(classLoader, serviceName);
 
 			if (factory == null) {
-				throw new IOException(String.format("Failed to load service definition (%s). Make sure the path and service name are correct.", serviceName));
+				throw new IOException(String.format(
+						"Failed to load service definition (%s). Make sure the path and service name are correct.",
+						serviceName));
 			}
-			
-			
 
 			RIProcessor.start(sc);
 
@@ -248,7 +250,8 @@ public class MsgPackRpcServer {
 		final Object service = factory.createService(classLoader, context, firstIntf);
 
 		final MethodDispatcherEx dp =
-				new MethodDispatcherEx(new Reflect(server.getEventLoop().getMessagePack()), Proxy.newProxyInstance(classLoader,
+				new MethodDispatcherEx(new Reflect(server.getEventLoop().getMessagePack()), Proxy.newProxyInstance(
+						classLoader,
 						factory.getInterfaces().toArray(new Class[] {}),
 						new InvocationHandler() {
 							@Override
@@ -262,29 +265,32 @@ public class MsgPackRpcServer {
 								}
 							}
 						}), methods.toArray(new Method[] {}));
-		
+
 		/* 初期化(init)を呼んで見る <TEST> */
 		/* この時点で、serviceとMethodDispatcherが生成されているので、基本的にはサービスを呼び出し可能なはず*/
 		boolean hasServiceInitialize = false;
-		
-		for(Class<?> clsIf : factory.getInterfaces()){
-			if(clsIf.getName().equals("jp.go.nict.wisdom.wrapper.status.ServiceInitialize")){
-				for(Method m : clsIf.getMethods()){
-					if(m.getName().equals("init")){
+
+		for (Class<?> clsIf : factory.getInterfaces()) {
+//			System.out.println(clsIf.getName());
+			if (clsIf.getName().equals("jp.go.nict.wisdom.wrapper.status.ServiceInitialize")) {
+				for (Method m : clsIf.getMethods()) {
+//					System.out.println(m.getName());
+					if (m.getName().equals("init")) {
 						hasServiceInitialize = true;
 					}
 				}
 				break;
 			}
 		}
-		if(hasServiceInitialize){
+		if (hasServiceInitialize) {
 			try {
-				dp.dispatch(new RequestEx("init",null));
+				dp.dispatch(new RequestEx("init",ValueFactory.createArrayValue()));
 			} catch (Exception e) {
-				; //何もしない
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
 			}
 		}
-		
+
 		server.serve(dp);
 	}
 }
