@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="rasc_release" default="package">
 
-  <property name="package_name" value="rasc-core-${version}"/>
   <import file="core_common.xml"/>
+  <property name="package_name" value="rasc-core-${version}"/>
 
   <target name="init">
     <mkdir dir="build" />
