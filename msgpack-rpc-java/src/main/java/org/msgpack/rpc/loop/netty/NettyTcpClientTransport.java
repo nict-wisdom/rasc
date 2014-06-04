@@ -49,7 +49,6 @@ class NettyTcpClientTransport extends PooledStreamClientTransport<Channel, Chann
         Map<String, Object> options = config.getOptions();
         setIfNotPresent(options, TCP_NO_DELAY, Boolean.TRUE, bootstrap);
         bootstrap.setOptions(options);
-       
     }
 
     private final ChannelFutureListener connectListener = new ChannelFutureListener() {

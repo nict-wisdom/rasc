@@ -17,17 +17,16 @@
 //
 package org.msgpack.rpc;
 
-import org.msgpack.type.Value;
 import org.msgpack.rpc.message.ResponseMessage;
 import org.msgpack.rpc.transport.MessageSendable;
+import org.msgpack.type.Value;
 
 public class Request implements Callback<Object> {
-    
-    /* protectedへ変更*/
+	//Changed private -> protected.
     protected MessageSendable channel; // TODO #SF synchronized?
     protected int msgid;
-    protected String method;
-    protected Value args;
+    private String method;
+    private Value args;
 
     public Request(MessageSendable channel, int msgid, String method, Value args) {
         this.channel = channel;

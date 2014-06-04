@@ -6,7 +6,7 @@
   <name>MessagePack for Java</name>
   <description>MessagePack for Java is a binary-based efficient object
       serialization library in Java.</description>
-  <version>0.6.8-SNAPSHOT</version>
+  <version>0.6.12-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <url>http://msgpack.org/</url>
 
@@ -57,7 +57,7 @@
     <dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.16.1-GA</version>
+      <version>3.18.1-GA</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
