@@ -46,8 +46,6 @@ import jp.go.nict.langrid.servicecontainer.handler.RIProcessor;
  */
 public class ProxyService implements InvocationHandler, ProxyServiceName, StreamingNotifier<Object> {
 
-//	private static Map<URL, Object> msgpackServices = null;
-
 	private ClientFactory clientFactory = null;
 
 	private EndpointFactory endpointFactory = null;
@@ -64,18 +62,8 @@ public class ProxyService implements InvocationHandler, ProxyServiceName, Stream
 	 * コンストラクタ
 	 */
 	public ProxyService() {
-//		checkStart();
 
 	}
-
-	/**
-	 * MsgPackサービス初期化処理
-	 */
-//	protected synchronized void checkStart() {
-//		if (msgpackServices == null) {
-//			msgpackServices = new ConcurrentHashMap<URL, Object>();
-//		}
-//	}
 
 	/**
 	 * ClientFactoryを取得する
@@ -155,20 +143,8 @@ public class ProxyService implements InvocationHandler, ProxyServiceName, Stream
 		if (clientFactory.getClass().equals(MsgPackClientFactory.class)) {
 			url = new URL(String.format("http://%s:%s/", url.getHost(), getMsgpackPort()));
 		}
-		
-		//	if (clientFactory.getClass().equals(MsgPackClientFactory.class)) {
-	//		url = new URL(String.format("http://%s:%s/", url.getHost(), getMsgpackPort()));
-	//		synchronized (msgpackServices) {
-	//			if (msgpackServices.containsKey(url)) {
-	//				ob = msgpackServices.get(url);
-	//			} else {
-					ob = new MsgPackClientFactory().create(service, url);
-	//				msgpackServices.put(url, ob);
-	//			}
-	//		}
-	//	} else {
-			ob = clientFactory.create(service, url);
-	//	}
+
+		ob = clientFactory.create(service, url);
 
 		final Class<?> resutType = method.getReturnType();
 		final Queue<Object> que = new ConcurrentLinkedQueue<Object>();
@@ -193,11 +169,11 @@ public class ProxyService implements InvocationHandler, ProxyServiceName, Stream
 
 		if (isStreaming) {
 			Object r = method.invoke(ob, args);
-			
-			if(r != null){
-				if((r.getClass().isArray()) && (r.getClass().equals(resutType))){
-					Object[] arr = (Object[])r;
-					for(Object a :arr){
+
+			if (r != null) {
+				if ((r.getClass().isArray()) && (r.getClass().equals(resutType))) {
+					Object[] arr = (Object[]) r;
+					for (Object a : arr) {
 						que.add(resutType.getComponentType().cast(a));
 					}
 				}

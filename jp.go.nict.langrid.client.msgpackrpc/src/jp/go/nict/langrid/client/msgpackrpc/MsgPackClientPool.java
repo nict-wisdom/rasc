@@ -1,3 +1,20 @@
+/*
+* Copyright (C) 2014 Information Analysis Laboratory, NICT
+*
+* RaSC is free software: you can redistribute it and/or modify it
+* under the terms of the GNU Lesser General Public License as published by
+* the Free Software Foundation, either version 2.1 of the License, or (at
+* your option) any later version.
+*
+* RaSC is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+* General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package jp.go.nict.langrid.client.msgpackrpc;
 
 import java.net.InetSocketAddress;
@@ -12,7 +29,6 @@ import org.msgpack.rpc.loop.netty.NettyEventLoopEx;
 public class MsgPackClientPool {
 
 	private static final MsgPackClientPool myInstance = new MsgPackClientPool();
-	//	private boolean isEmpty = true;
 	private Map<InetSocketAddress, ClientEx> poolClient = new HashMap<>();
 
 	private MsgPackClientPool() {
@@ -23,7 +39,7 @@ public class MsgPackClientPool {
 		return myInstance;
 	}
 
-	public ClientEx getClient(InetSocketAddress addr,int timeOut) {
+	public ClientEx getClient(InetSocketAddress addr, int timeOut) {
 		ClientEx ce = null;
 
 		synchronized (poolClient) {
@@ -52,14 +68,14 @@ public class MsgPackClientPool {
 						break;
 					}
 				}
-				
+
 				if (key != null) {
 					poolClient.remove(key);
-					execClose=true;
+					execClose = true;
 				}
 			}
 		}
-		if(execClose){
+		if (execClose) {
 			ce.close();
 			ce.getEventLoop().shutdown();
 			try {

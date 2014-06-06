@@ -1,3 +1,20 @@
+/*
+* Copyright (C) 2014 Information Analysis Laboratory, NICT
+*
+* RaSC is free software: you can redistribute it and/or modify it
+* under the terms of the GNU Lesser General Public License as published by
+* the Free Software Foundation, either version 2.1 of the License, or (at
+* your option) any later version.
+*
+* RaSC is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+* General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package jp.go.nict.langrid.client.msgpackrpc;
 
 import java.io.Closeable;
@@ -23,10 +40,7 @@ import org.msgpack.type.Value;
  */
 class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, ArrayElementsNotifier {
 
-	//	private Class<?> resultType = null;
-	//	private Class<?> primitiveResultType = null;
 	private Object proxyInvocation = null;
-	//	private ArrayElementsReceiver<Object> rcv = null;
 	private ClientEx client = null;
 	private Class<T> interfaceClass = null;
 	private InetSocketAddress address = null;
@@ -48,10 +62,8 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 	public MsgPackRpcInvocationHandler(InetSocketAddress address, int timeOut, Class<T> clsz) {
 		this(clsz);//default
 		this.address = address;
-		//		client = new ClientEx(address, new NettyEventLoopEx(Executors.newCachedThreadPool(), Executors.newCachedThreadPool(), Executors.newScheduledThreadPool(2), new MessagePack()));
 		client = MsgPackClientPool.getInstance().getClient(address, timeOut);
 		proxyInvocation = client.proxy(clsz);
-		//		client.setRequestTimeout(timeOut);
 	}
 
 	/* (非 Javadoc)
@@ -92,7 +104,7 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 				} else {
 					//receiverが無い場合には、デフォルトを用意して、格納しておく
 					final List<Object> defList = new ArrayList<>();
-					
+
 					client.AddListener(method.getName(), new ResponseDataListener() {
 						@Override
 						public void onResponseData(int msgid, Value result, Value error) {
@@ -105,23 +117,21 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 							}
 						}
 					});
-				
+
 					//invoke
 					Object result = method.invoke(proxyInvocation, args);
-					if(result.getClass().equals(resultType)){
-						if(result.getClass().getComponentType().equals(convertType)){
-							Object[] o = (Object[])result;
-							for(Object in:o){
+					if (result.getClass().equals(resultType)) {
+						if (result.getClass().getComponentType().equals(convertType)) {
+							Object[] o = (Object[]) result;
+							for (Object in : o) {
 								defList.add(in);
 							}
 						}
 					}
 					//詰め直し
 					int maxSize = defList.size();
-					Object arrObj = Array.newInstance(convertType, defList.size());
-					for(int i = 0; i < maxSize ;i++){
-						Array.set(arrObj, i, convertType.cast(defList.get(i)));
-					}
+					Object arrObj = Array.newInstance(convertType, maxSize);
+					System.arraycopy(defList.toArray(), 0, arrObj, 0, maxSize);
 					return arrObj;
 				}
 
@@ -145,13 +155,6 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 	@Override
 	public void close() throws IOException {
 		if (client != null) {
-			//			client.close();
-			//			client.getEventLoop().shutdown();
-			//			try {
-			//				client.getEventLoop().join();
-			//			} catch (InterruptedException e) {
-			//				e.printStackTrace();
-			//			}
 			MsgPackClientPool.getInstance().close(client);
 			client = null;
 		}
