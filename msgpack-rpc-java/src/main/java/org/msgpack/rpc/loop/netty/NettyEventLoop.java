@@ -41,7 +41,7 @@ public class NettyEventLoop extends EventLoop {
     }
 
     protected ClientSocketChannelFactory clientFactory = null; //Changed private -> protected.
-    private ServerSocketChannelFactory serverFactory = null;
+    protected ServerSocketChannelFactory serverFactory = null;
 
     public synchronized ClientSocketChannelFactory getClientFactory() {
         if (clientFactory == null) {

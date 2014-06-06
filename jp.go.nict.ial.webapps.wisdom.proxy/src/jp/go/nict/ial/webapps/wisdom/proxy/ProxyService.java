@@ -23,9 +23,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import jp.go.nict.isp.wisdom2013.api.balancer.EndpointFactory;
@@ -48,7 +46,7 @@ import jp.go.nict.langrid.servicecontainer.handler.RIProcessor;
  */
 public class ProxyService implements InvocationHandler, ProxyServiceName, StreamingNotifier<Object> {
 
-	private static Map<URL, Object> msgpackServices = null;
+//	private static Map<URL, Object> msgpackServices = null;
 
 	private ClientFactory clientFactory = null;
 
@@ -66,18 +64,18 @@ public class ProxyService implements InvocationHandler, ProxyServiceName, Stream
 	 * コンストラクタ
 	 */
 	public ProxyService() {
-		checkStart();
+//		checkStart();
 
 	}
 
 	/**
 	 * MsgPackサービス初期化処理
 	 */
-	protected synchronized void checkStart() {
-		if (msgpackServices == null) {
-			msgpackServices = new ConcurrentHashMap<URL, Object>();
-		}
-	}
+//	protected synchronized void checkStart() {
+//		if (msgpackServices == null) {
+//			msgpackServices = new ConcurrentHashMap<URL, Object>();
+//		}
+//	}
 
 	/**
 	 * ClientFactoryを取得する
@@ -153,19 +151,19 @@ public class ProxyService implements InvocationHandler, ProxyServiceName, Stream
 		Object ob = null;
 		final StreamingReceiver<Object> fsr = sr;
 
-		if (clientFactory.getClass().equals(MsgPackClientFactory.class)) {
-			url = new URL(String.format("http://%s:%s/", url.getHost(), getMsgpackPort()));
-			synchronized (msgpackServices) {
-				if (msgpackServices.containsKey(url)) {
-					ob = msgpackServices.get(url);
-				} else {
+	//	if (clientFactory.getClass().equals(MsgPackClientFactory.class)) {
+	//		url = new URL(String.format("http://%s:%s/", url.getHost(), getMsgpackPort()));
+	//		synchronized (msgpackServices) {
+	//			if (msgpackServices.containsKey(url)) {
+	//				ob = msgpackServices.get(url);
+	//			} else {
 					ob = new MsgPackClientFactory().create(service, url);
-					msgpackServices.put(url, ob);
-				}
-			}
-		} else {
+	//				msgpackServices.put(url, ob);
+	//			}
+	//		}
+	//	} else {
 			ob = clientFactory.create(service, url);
-		}
+	//	}
 
 		final Class<?> resutType = method.getReturnType();
 		final Queue<Object> que = new ConcurrentLinkedQueue<Object>();
@@ -189,7 +187,16 @@ public class ProxyService implements InvocationHandler, ProxyServiceName, Stream
 		Object o = null;
 
 		if (isStreaming) {
-			o = method.invoke(ob, args);
+			Object r = method.invoke(ob, args);
+			
+			if(r != null){
+				if((r.getClass().isArray()) && (r.getClass().equals(resutType))){
+					Object[] arr = (Object[])r;
+					for(Object a :arr){
+						que.add(resutType.getComponentType().cast(a));
+					}
+				}
+			}
 			if (resutType.isArray()) {
 				int size = que.size();
 				if (size != 0) {

@@ -37,7 +37,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.jboss.netty.channel.socket.ClientSocketChannelFactory;
+import org.jboss.netty.channel.socket.ServerSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.msgpack.MessagePack;
 import org.msgpack.rpc.Server;
 import org.msgpack.rpc.Session;
@@ -48,35 +50,42 @@ import org.msgpack.rpc.transport.ServerTransport;
 
 public class NettyEventLoopEx extends NettyEventLoop {
 
-    /**
-     * @param workerExecutor
-     * @param ioExecutor
-     * @param scheduledExecutor
-     * @param messagePack
-     */
-    public NettyEventLoopEx(ExecutorService workerExecutor,
-            ExecutorService ioExecutor,
-            ScheduledExecutorService scheduledExecutor, MessagePack messagePack) {
-        super(workerExecutor, ioExecutor, scheduledExecutor, messagePack);
-    }
+	/**
+	 * @param workerExecutor
+	 * @param ioExecutor
+	 * @param scheduledExecutor
+	 * @param messagePack
+	 */
+	public NettyEventLoopEx(ExecutorService workerExecutor, ExecutorService ioExecutor,
+			ScheduledExecutorService scheduledExecutor, MessagePack messagePack) {
+		super(workerExecutor, ioExecutor, scheduledExecutor, messagePack);
+	}
 
-    @Override
-    protected ClientTransport openTcpTransport(TcpClientConfig config,
-            Session session) {
-        return new NettyTcpClientTransportEx(config, session, this);
-    }
+	@Override
+	public synchronized ClientSocketChannelFactory getClientFactory() {
+		if (clientFactory == null) {
+			clientFactory = new NioClientSocketChannelFactory(getIoExecutor(), getWorkerExecutor(), 1);
+		}
+		return clientFactory;
+	}
 
-    @Override
-    protected ServerTransport listenTcpTransport(TcpServerConfig config,
-            Server server) {
-        return new NettyTcpServerTransportEx(config, server, this);
-    }
-    
-    @Override
-    public synchronized ClientSocketChannelFactory getClientFactory() {
-        if (clientFactory == null) {
-            clientFactory = new NioClientSocketChannelFactory(getIoExecutor(),getWorkerExecutor(),1);
-        }
-        return clientFactory;
-    }
+	@Override
+	public synchronized ServerSocketChannelFactory getServerFactory() {
+		if (serverFactory == null) {
+			serverFactory = new NioServerSocketChannelFactory(getIoExecutor(), getWorkerExecutor());
+		}
+		return serverFactory;
+	}
+
+	@Override
+	protected ServerTransport listenTcpTransport(TcpServerConfig config,
+			Server server) {
+		return new NettyTcpServerTransportEx(config, server, this);
+	}
+
+	@Override
+	protected ClientTransport openTcpTransport(TcpClientConfig config,
+			Session session) {
+		return new NettyTcpClientTransportEx(config, session, this);
+	}
 }

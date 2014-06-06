@@ -35,16 +35,17 @@
 package jp.go.nict.ial.servicecontainer.handler.msgpackrpc;
 
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
 import jp.go.nict.langrid.servicecontainer.executor.StreamingNotifier;
 import jp.go.nict.langrid.servicecontainer.executor.StreamingReceiver;
 
+import org.msgpack.rpc.Request;
+import org.msgpack.rpc.RequestEx;
 import org.msgpack.rpc.dispatcher.MethodDispatcher;
 import org.msgpack.rpc.reflect.Invoker;
 import org.msgpack.rpc.reflect.Reflect;
 import org.msgpack.rpc.reflect.ReflectionInvokerBuilder.ReflectionInvoker;
-import org.msgpack.rpc.*;
 
 /**
  * MethodDispatcherExクラス<br>
@@ -55,6 +56,10 @@ import org.msgpack.rpc.*;
  */
 public class MethodDispatcherEx extends MethodDispatcher {
 
+	private static final String PROP_KEY_MSGPACKRPC_ENABLE_STREAMING = "msgpack.rpc.enable.streaming";
+	private static final String PROP_VALUE_MSGPACKRPC_ENABLE_STREAMING = "yes";
+	private boolean isEnableStreaming = true;
+
 	/**
 	 * コンストラクタ
 	 * @param reflect 
@@ -63,6 +68,10 @@ public class MethodDispatcherEx extends MethodDispatcher {
 	 */
 	public MethodDispatcherEx(Reflect reflect, Object target, Class<?> iface) {
 		super(reflect, target, iface);
+		String value = System.getProperty(PROP_KEY_MSGPACKRPC_ENABLE_STREAMING, PROP_VALUE_MSGPACKRPC_ENABLE_STREAMING);
+		if (!value.equals(PROP_VALUE_MSGPACKRPC_ENABLE_STREAMING)) {
+			isEnableStreaming = false;
+		}
 	}
 
 	/**
@@ -73,6 +82,10 @@ public class MethodDispatcherEx extends MethodDispatcher {
 	 */
 	public MethodDispatcherEx(Reflect reflect, Object target, Method[] methods) {
 		super(reflect, target, methods);
+		String value = System.getProperty(PROP_KEY_MSGPACKRPC_ENABLE_STREAMING, PROP_VALUE_MSGPACKRPC_ENABLE_STREAMING);
+		if (!value.equals(PROP_VALUE_MSGPACKRPC_ENABLE_STREAMING)) {
+			isEnableStreaming = false;
+		}
 	}
 
 	/**
@@ -82,6 +95,10 @@ public class MethodDispatcherEx extends MethodDispatcher {
 	 */
 	public MethodDispatcherEx(Reflect reflect, Object target) {
 		super(reflect, target);
+		String value = System.getProperty(PROP_KEY_MSGPACKRPC_ENABLE_STREAMING, PROP_VALUE_MSGPACKRPC_ENABLE_STREAMING);
+		if (!value.equals(PROP_VALUE_MSGPACKRPC_ENABLE_STREAMING)) {
+			isEnableStreaming = false;
+		}
 	}
 
 	/* (非 Javadoc)
@@ -98,19 +115,17 @@ public class MethodDispatcherEx extends MethodDispatcher {
 		}
 
 		if (ivk instanceof ReflectionInvoker) {
-			ReflectionInvoker ri = (ReflectionInvoker)ivk;
-			if(ri.getMethod().getReturnType().isArray()){
-				if (target instanceof StreamingNotifier) {
-					StreamingNotifier<Object> notify = (StreamingNotifier<Object>) target;
-					notify.setReceiver(new StreamingReceiver<Object>() {
+			ReflectionInvoker ri = (ReflectionInvoker) ivk;
+			if ((ri.getMethod().getReturnType().isArray()) && (isEnableStreaming) && (target instanceof StreamingNotifier)) {
+				StreamingNotifier<Object> notify = (StreamingNotifier<Object>) target;
+				notify.setReceiver(new StreamingReceiver<Object>() {
 
-						@Override
-						public boolean receive(Object result) {
-							requestEx.responseData(result, null);
-							return true;
-						}
-					});
-				}
+					@Override
+					public boolean receive(Object result) {
+						requestEx.responseData(result, null);
+						return true;
+					}
+				});
 			}
 		}
 		ivk.invoke(target, request);

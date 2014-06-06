@@ -17,33 +17,35 @@
 //
 package org.msgpack.rpc;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.msgpack.rpc.address.Address;
-import org.msgpack.rpc.message.RequestMessage;
-import org.msgpack.rpc.message.NotifyMessage;
-import org.msgpack.rpc.reflect.Reflect;
-import org.msgpack.rpc.transport.ClientTransport;
 import org.msgpack.rpc.config.ClientConfig;
 import org.msgpack.rpc.loop.EventLoop;
+import org.msgpack.rpc.message.NotifyMessage;
+import org.msgpack.rpc.message.RequestMessage;
+import org.msgpack.rpc.reflect.Reflect;
+import org.msgpack.rpc.transport.ClientTransport;
 import org.msgpack.type.Value;
 import org.msgpack.type.ValueFactory;
 
 public class Session {
     protected Address address;
     protected EventLoop loop;
-    private ClientTransport transport;
+    protected ClientTransport transport;
     private Reflect reflect;
 
     private int requestTimeout;
-    private AtomicInteger seqid = new AtomicInteger(0); // FIXME rand()?
-    private Map<Integer, FutureImpl> reqtable = new HashMap<Integer, FutureImpl>();
+    //Changed private -> protected.
+    protected AtomicInteger seqid = new AtomicInteger(0); // FIXME rand()?
+    protected Map<Integer, FutureImpl> reqtable = new HashMap<Integer, FutureImpl>();
 
     Session(Address address, ClientConfig config, EventLoop loop) {
         this(address,config,loop,new Reflect(loop.getMessagePack()));

@@ -22,8 +22,6 @@ package jp.go.nict.isp.wrapper.wisdom.abstractservice;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import jp.go.nict.isp.wisdom2013.api.balancer.EndpointFactory;
 import jp.go.nict.langrid.service_1_2.ProcessFailedException;
@@ -43,8 +41,8 @@ public abstract class AbstractServerModule<V, S> {
 	private final V[] arrResultType;
 	private final ResultStorage<V> resultStorage;
 	private final AbstractServerModuleBase serverBase;
-	private final Object message;
-	private final Map<String, S> services;
+//	private final Object message;
+//	private final Map<String, S> services;
 
 	/* コンストラクタ */
 	/**
@@ -61,8 +59,8 @@ public abstract class AbstractServerModule<V, S> {
 		this.resultStorage = new ResultStorageBase<V>(serverBase, arrResultType);
 		this.serverBase = serverBase;
 
-		this.message = null;
-		services = new ConcurrentHashMap<String, S>();
+//		this.message = null;
+//		services = new ConcurrentHashMap<String, S>();
 		System.out.printf("<%d> ==%s ()== \n", System.currentTimeMillis(), getLogClassName());
 	}
 
@@ -81,8 +79,8 @@ public abstract class AbstractServerModule<V, S> {
 		this.serverBase = serverBase;
 		this.resultStorage = resultStorage;
 
-		this.message = null;
-		services = new ConcurrentHashMap<String, S>();
+//		this.message = null;
+//		services = new ConcurrentHashMap<String, S>();
 		System.out.printf("<%d> ==%s ()== \n", System.currentTimeMillis(), getLogClassName());
 	}
 
@@ -95,17 +93,17 @@ public abstract class AbstractServerModule<V, S> {
 	 * @param services サービスマッピング用MAPクラス
 	 * @param message Msgpack用オブジェクト
 	 */
-	public AbstractServerModule(Class<S> clsService, String strLogName, V[] arrResultType, AbstractServerModuleBase serverBase, Map<String, S> services, Object message) {
-		this.clsService = clsService;
-		this.strLogName = strLogName;
-		this.arrResultType = arrResultType;
-		this.resultStorage = new ResultStorageBase<V>(serverBase, arrResultType);
-		this.serverBase = serverBase;
-
-		this.message = message;
-		this.services = services;
-		System.out.printf("<%d> ==%s ()== \n", System.currentTimeMillis(), getLogClassName());
-	}
+//	public AbstractServerModule(Class<S> clsService, String strLogName, V[] arrResultType, AbstractServerModuleBase serverBase, Map<String, S> services, Object message) {
+//		this.clsService = clsService;
+//		this.strLogName = strLogName;
+//		this.arrResultType = arrResultType;
+//		this.resultStorage = new ResultStorageBase<V>(serverBase, arrResultType);
+//		this.serverBase = serverBase;
+//
+////		this.message = message;
+////		this.services = services;
+//		System.out.printf("<%d> ==%s ()== \n", System.currentTimeMillis(), getLogClassName());
+//	}
 
 	/**
 	 * コンストラクタ
@@ -117,17 +115,17 @@ public abstract class AbstractServerModule<V, S> {
 	 * @param services サービスマッピング用MAPクラス
 	 * @param message Msgpack用オブジェクト
 	 */
-	public AbstractServerModule(Class<S> clsService, String strLogName, V[] arrResultType, AbstractServerModuleBase serverBase, ResultStorage<V> resultStorage, Map<String, S> services, Object message) {
-		this.clsService = clsService;
-		this.strLogName = strLogName;
-		this.arrResultType = arrResultType;
-		this.serverBase = serverBase;
-		this.resultStorage = resultStorage;
-
-		this.message = message;
-		this.services = services;
-		System.out.printf("<%d> ==%s ()== \n", System.currentTimeMillis(), getLogClassName());
-	}
+//	public AbstractServerModule(Class<S> clsService, String strLogName, V[] arrResultType, AbstractServerModuleBase serverBase, ResultStorage<V> resultStorage, Map<String, S> services, Object message) {
+//		this.clsService = clsService;
+//		this.strLogName = strLogName;
+//		this.arrResultType = arrResultType;
+//		this.serverBase = serverBase;
+//		this.resultStorage = resultStorage;
+//
+////		this.message = message;
+////		this.services = services;
+//		System.out.printf("<%d> ==%s ()== \n", System.currentTimeMillis(), getLogClassName());
+//	}
 
 	/**
 	 * サービス連携呼び出し(ワーカーとサービス連携を開始する)
@@ -162,7 +160,7 @@ public abstract class AbstractServerModule<V, S> {
 			EndpointFactory ef = (serverBase.getEndpointFactory() != null) ? serverBase.getEndpointFactory() : new DefaultEndpointFactory();
 			ef.setRealPath(RIProcessor.getCurrentServiceContext().getRealPath("/WEB-INF/"));
 			//呼び出し
-			new WorkerExecutor<V>().execute(isStreamingReady, resultReceiver, serverBase.getClientFactory(), clsService, serverBase.getWaitTimeOut(), this, services, resultStorage, serverBase.getEndpointList(),ef);
+			new WorkerExecutor<V>().execute(isStreamingReady, resultReceiver, serverBase.getClientFactory(), clsService, serverBase.getWaitTimeOut(), this,resultStorage, serverBase.getEndpointList(),ef);
 
 		} else {
 			System.out.printf("use Result cached data \n");

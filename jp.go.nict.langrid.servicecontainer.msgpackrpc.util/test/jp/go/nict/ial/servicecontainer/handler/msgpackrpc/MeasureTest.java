@@ -17,6 +17,7 @@
 
 package jp.go.nict.ial.servicecontainer.handler.msgpackrpc;
 
+import java.io.Closeable;
 import java.net.URL;
 
 import jp.go.nict.ial.mock.HelloService;
@@ -62,6 +63,7 @@ public class MeasureTest {
 					"%.2ftimes/msec.", c * 1.0 / sec));
 		} finally{
 			System.out.println("--- Finish!!! ---");
+			((Closeable)sv).close();
 			factory.shutdown();//追加
 		}
 	}

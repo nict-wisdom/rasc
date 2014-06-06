@@ -25,6 +25,7 @@ import java.lang.reflect.Proxy;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,11 +41,11 @@ import jp.go.nict.langrid.servicecontainer.handler.RIProcessor;
 import jp.go.nict.langrid.servicecontainer.handler.ServiceFactory;
 import jp.go.nict.langrid.servicecontainer.handler.ServiceLoader;
 
+import org.msgpack.MessagePack;
 import org.msgpack.rpc.RequestEx;
 import org.msgpack.rpc.Server;
 import org.msgpack.rpc.ServerEx;
-import org.msgpack.rpc.loop.EventLoop;
-import org.msgpack.rpc.loop.netty.NettyEventLoopFactoryEx;
+import org.msgpack.rpc.loop.netty.NettyEventLoopEx;
 import org.msgpack.rpc.reflect.Reflect;
 import org.msgpack.type.ValueFactory;
 import org.w3c.dom.Document;
@@ -121,8 +122,8 @@ public class MsgPackRpcServer {
 	public void start(String serviceName, int port, final String srcPath, final ClassLoader classLoader)
 			throws UnknownHostException, IOException, InterruptedException {
 
-		EventLoop.setFactory(new NettyEventLoopFactoryEx());
-		ServerEx server = new ServerEx();
+		//EventLoop.setFactory(new NettyEventLoopFactoryEx());
+		ServerEx server = new ServerEx(new NettyEventLoopEx(Executors.newCachedThreadPool(), Executors.newCachedThreadPool(), Executors.newScheduledThreadPool(2), new MessagePack()));
 		try {
 
 			final String servicesPath = loadWebXml(srcPath + "/WEB-INF/web.xml");
@@ -271,10 +272,10 @@ public class MsgPackRpcServer {
 		boolean hasServiceInitialize = false;
 
 		for (Class<?> clsIf : factory.getInterfaces()) {
-//			System.out.println(clsIf.getName());
+			//			System.out.println(clsIf.getName());
 			if (clsIf.getName().equals("jp.go.nict.wisdom.wrapper.status.ServiceInitialize")) {
 				for (Method m : clsIf.getMethods()) {
-//					System.out.println(m.getName());
+					//					System.out.println(m.getName());
 					if (m.getName().equals("init")) {
 						hasServiceInitialize = true;
 					}
@@ -284,7 +285,7 @@ public class MsgPackRpcServer {
 		}
 		if (hasServiceInitialize) {
 			try {
-				dp.dispatch(new RequestEx("init",ValueFactory.createArrayValue()));
+				dp.dispatch(new RequestEx("init", ValueFactory.createArrayValue()));
 			} catch (Exception e) {
 				// TODO 自動生成された catch ブロック
 				e.printStackTrace();

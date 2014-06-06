@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,7 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jp.go.nict.isp.wisdom2013.api.balancer.EndpointFactory;
 import jp.go.nict.langrid.client.ClientFactory;
-import jp.go.nict.langrid.client.msgpackrpc.MsgPackClientFactory;
 import jp.go.nict.langrid.commons.rpc.ArrayElementsNotifier;
 import jp.go.nict.langrid.commons.rpc.ArrayElementsReceiver;
 import jp.go.nict.langrid.service_1_2.ProcessFailedException;
@@ -47,8 +45,8 @@ import jp.go.nict.langrid.servicecontainer.executor.StreamingReceiver;
  */
 public class WorkerExecutor<V> {
 
-//	private EndpointFactory endpointFactory;
-//	private AbstractServerModule<V, ?> parent;
+	//	private EndpointFactory endpointFactory;
+	//	private AbstractServerModule<V, ?> parent;
 
 	/**
 	 * コンストラクタ
@@ -57,12 +55,12 @@ public class WorkerExecutor<V> {
 
 	}
 
-//	public WorkerExecutor(EndpointFactory factory, AbstractServerModule<V, ?> parent) {
-//		this();
-//		this.endpointFactory = factory;
-//		this.parent = parent;
-//
-//	}
+	//	public WorkerExecutor(EndpointFactory factory, AbstractServerModule<V, ?> parent) {
+	//		this();
+	//		this.endpointFactory = factory;
+	//		this.parent = parent;
+	//
+	//	}
 
 	/**
 	 * サービス連携実行処理
@@ -79,9 +77,16 @@ public class WorkerExecutor<V> {
 	 * @param ef エンドポイントファクトリー
 	 * @throws ProcessFailedException 
 	 */
-	public final <S> void execute(final boolean isStreamingReady, final StreamingReceiver<Object> resultReceiver,
-			final ClientFactory clfactory, final Class<S> clsService, final int waitTimeOut,
-			final AbstractServerModule<V, S> serverModule, final Map<String, S> services, final ResultStorage<V> resultStorage, final List<String> defEndpoints,final EndpointFactory ef) throws ProcessFailedException {
+	public final <S> void execute(final boolean isStreamingReady,
+			final StreamingReceiver<Object> resultReceiver,
+			final ClientFactory clfactory,
+			final Class<S> clsService,
+			final int waitTimeOut,
+			final AbstractServerModule<V, S> serverModule,
+			final ResultStorage<V> resultStorage,
+			final List<String> defEndpoints,
+			final EndpointFactory ef) throws ProcessFailedException {
+
 		final ConcurrentLinkedQueue<V> queResult = new ConcurrentLinkedQueue<V>();
 		final AtomicBoolean atomicJobEnd = new AtomicBoolean(false);
 		final AtomicBoolean atomicDataEnd = new AtomicBoolean(false);
@@ -90,7 +95,7 @@ public class WorkerExecutor<V> {
 		/* executor で各Workerへの接続を実行する。 */
 		final ExecutorService exec = Executors.newCachedThreadPool();
 		final String threadTag = Thread.currentThread().getName();
-//		final EndpointFactory ef = endpointFactory;
+		//		final EndpointFactory ef = endpointFactory;
 		ef.setSigName(clsService.getSimpleName());
 
 		for (String endpoint : ef.create(defEndpoints)) {
@@ -102,15 +107,15 @@ public class WorkerExecutor<V> {
 				@Override
 				public void run() {
 					try {
-						boolean isMsgPack = false;
-						if (clfactory.getClass().equals(MsgPackClientFactory.class)) {
-							isMsgPack = true;
-							if (!services.containsKey(url)) {
-								services.put(url, new MsgPackClientFactory().create(clsService, new URL(url)));
-							}
-						}
+//						boolean isMsgPack = false;
+//						if (clfactory.getClass().equals(MsgPackClientFactory.class)) {
+//							isMsgPack = true;
+//							if (!services.containsKey(url)) {
+//								services.put(url, new MsgPackClientFactory().create(clsService, new URL(url)));
+//							}
+//						}
 
-						final S s = (isMsgPack) ? services.get(url) : clfactory.create(clsService, new URL(url));
+						final S s = clfactory.create(clsService, new URL(url));
 						final AtomicInteger atCount = new AtomicInteger(0);
 
 						if (s instanceof ArrayElementsNotifier) {
