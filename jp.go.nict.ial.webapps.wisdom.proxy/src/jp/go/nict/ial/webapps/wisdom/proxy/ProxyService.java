@@ -151,7 +151,12 @@ public class ProxyService implements InvocationHandler, ProxyServiceName, Stream
 		Object ob = null;
 		final StreamingReceiver<Object> fsr = sr;
 
-	//	if (clientFactory.getClass().equals(MsgPackClientFactory.class)) {
+		/* msgpackの場合には、portを変更*/
+		if (clientFactory.getClass().equals(MsgPackClientFactory.class)) {
+			url = new URL(String.format("http://%s:%s/", url.getHost(), getMsgpackPort()));
+		}
+		
+		//	if (clientFactory.getClass().equals(MsgPackClientFactory.class)) {
 	//		url = new URL(String.format("http://%s:%s/", url.getHost(), getMsgpackPort()));
 	//		synchronized (msgpackServices) {
 	//			if (msgpackServices.containsKey(url)) {
