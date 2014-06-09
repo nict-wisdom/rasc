@@ -29,6 +29,7 @@ import java.util.List;
 import jp.go.nict.langrid.commons.rpc.ArrayElementsNotifier;
 import jp.go.nict.langrid.commons.rpc.ArrayElementsReceiver;
 
+import org.msgpack.MessagePack;
 import org.msgpack.rpc.ClientEx;
 import org.msgpack.rpc.ResponseDataListener;
 import org.msgpack.type.Value;
@@ -81,8 +82,9 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 
 			//ResultType is Array
 			if (resultType.isArray()) {
+				final MessagePack mp = client.getEventLoop().getMessagePack(); //result desrialize
+				
 				/* Streaming over msgpack-rpc enabled.*/
-
 				if (rcv.get() != null) {
 					// receiverが登録されている場合は、それを利用する。
 					final ArrayElementsReceiver<Object> receiver = rcv.get();
@@ -92,7 +94,7 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 						public void onResponseData(int msgid, Value result, Value error) {
 							Object recv = null;
 							try {
-								recv = client.getEventLoop().getMessagePack().convert(result, convertType);
+								recv = mp.convert(result, convertType);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -104,34 +106,46 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 				} else {
 					//receiverが無い場合には、デフォルトを用意して、格納しておく
 					final List<Object> defList = new ArrayList<>();
+					final List<Value> resValue = new ArrayList<>();
 
 					client.AddListener(method.getName(), new ResponseDataListener() {
 						@Override
 						public void onResponseData(int msgid, Value result, Value error) {
-							Object recv = null;
-							try {
-								recv = client.getEventLoop().getMessagePack().convert(result, convertType);
-								defList.add(recv);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+							resValue.add(result);
+							
+//							Object recv = null;
+//							
+//							try {
+////								recv = mp.convert(result, convertType);
+////								defList.add(recv);
+//							} catch (IOException e) {
+//								e.printStackTrace();
+//							}
 						}
 					});
 
 					//invoke
 					Object result = method.invoke(proxyInvocation, args);
+					int nStreamCnt = resValue.size();
+					int nResultCnt = 0;
+					
 					if (result.getClass().equals(resultType)) {
 						if (result.getClass().getComponentType().equals(convertType)) {
-							Object[] o = (Object[]) result;
-							for (Object in : o) {
-								defList.add(in);
-							}
+							nResultCnt = Array.getLength(result);
 						}
 					}
 					//詰め直し
-					int maxSize = defList.size();
+					int maxSize = nStreamCnt + nResultCnt;
+					int index = 0;
 					Object arrObj = Array.newInstance(convertType, maxSize);
-					System.arraycopy(defList.toArray(), 0, arrObj, 0, maxSize);
+					
+					//Streaming
+					for(Value v:resValue){
+						Array.set(arrObj, index++, mp.convert(v, convertType));
+					}
+					
+					//result
+					System.arraycopy(result, 0, arrObj, index, nResultCnt);
 					return arrObj;
 				}
 

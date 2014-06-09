@@ -172,9 +172,6 @@ public class ClientEx extends Client {
 				if (rdl != null) {
 					responseListener.put(msgid, rdl);
 				}
-				//				if (listeners.isEmpty()) {
-				//					safeListener.remove();
-				//				}
 			}
 		}
 		transport.sendMessage(msg);
