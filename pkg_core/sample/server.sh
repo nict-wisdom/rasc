@@ -22,7 +22,7 @@ start() {
 	echo $SERVICE" started."
 	LOGFILE=$LOGDIR/$NAME.$nowTime.log
 	LOGLINK=$LOGDIR/$NAME.log
-	java -Djava.util.logging.config.file=./logger.property -classpath ./lib/*: jp.go.nict.ial.servicecontainer.msgpackrpc.util.MsgPackRpcServerInitializeStarter $SERVICE $PORT > "$LOGFILE" 2>&1 &
+	java -Djava.util.logging.config.file=./logging.properties -classpath ./lib/*: jp.go.nict.ial.servicecontainer.handler.msgpackrpc.MsgPackRpcServer $SERVICE $PORT > "$LOGFILE" 2>&1 &
 	echo $! > "$PID"
 	ln -sf "$LOGFILE" "$LOGLINK"
 	sleep 1
