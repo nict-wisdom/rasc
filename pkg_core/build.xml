@@ -33,11 +33,7 @@
     <build-jar project.name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" src.dir="${rasc.path}/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" dest.dir="${rasc_core.path}/build" />
   </target>
 
-  <target name="jp.go.nict.langrid.servicecontainer.msgpackrpc.util" depends="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc">
-    <build-jar project.name="jp.go.nict.langrid.servicecontainer.msgpackrpc.util" src.dir="${rasc.path}/jp.go.nict.langrid.servicecontainer.msgpackrpc.util/src" dest.dir="${rasc_core.path}/build" />
-  </target>
-
-  <target name="jp.go.nict.wisdom.wrapper" depends="jp.go.nict.langrid.servicecontainer.msgpackrpc.util">
+  <target name="jp.go.nict.wisdom.wrapper" depends="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc">
     <build-jar project.name="jp.go.nict.wisdom.wrapper" src.dir="${rasc.path}/jp.go.nict.wisdom.wrapper/src" dest.dir="${rasc_core.path}/build" />
   </target>
 
