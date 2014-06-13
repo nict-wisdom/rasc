@@ -48,9 +48,15 @@ import org.msgpack.rpc.config.TcpServerConfig;
 import org.msgpack.rpc.transport.ClientTransport;
 import org.msgpack.rpc.transport.ServerTransport;
 
+/**
+ * NettyEventLoop拡張クラス.
+ * @author kishimoto
+ *
+ */
 public class NettyEventLoopEx extends NettyEventLoop {
 
 	/**
+	 * コンストラクタ.
 	 * @param workerExecutor
 	 * @param ioExecutor
 	 * @param scheduledExecutor
@@ -61,6 +67,9 @@ public class NettyEventLoopEx extends NettyEventLoop {
 		super(workerExecutor, ioExecutor, scheduledExecutor, messagePack);
 	}
 
+	/* (非 Javadoc)
+	 * @see org.msgpack.rpc.loop.netty.NettyEventLoop#getClientFactory()
+	 */
 	@Override
 	public synchronized ClientSocketChannelFactory getClientFactory() {
 		if (clientFactory == null) {
@@ -69,6 +78,9 @@ public class NettyEventLoopEx extends NettyEventLoop {
 		return clientFactory;
 	}
 
+	/* (非 Javadoc)
+	 * @see org.msgpack.rpc.loop.netty.NettyEventLoop#getServerFactory()
+	 */
 	@Override
 	public synchronized ServerSocketChannelFactory getServerFactory() {
 		if (serverFactory == null) {
@@ -77,12 +89,18 @@ public class NettyEventLoopEx extends NettyEventLoop {
 		return serverFactory;
 	}
 
+	/* (非 Javadoc)
+	 * @see org.msgpack.rpc.loop.netty.NettyEventLoop#listenTcpTransport(org.msgpack.rpc.config.TcpServerConfig, org.msgpack.rpc.Server)
+	 */
 	@Override
 	protected ServerTransport listenTcpTransport(TcpServerConfig config,
 			Server server) {
 		return new NettyTcpServerTransportEx(config, server, this);
 	}
 
+	/* (非 Javadoc)
+	 * @see org.msgpack.rpc.loop.netty.NettyEventLoop#openTcpTransport(org.msgpack.rpc.config.TcpClientConfig, org.msgpack.rpc.Session)
+	 */
 	@Override
 	protected ClientTransport openTcpTransport(TcpClientConfig config,
 			Session session) {

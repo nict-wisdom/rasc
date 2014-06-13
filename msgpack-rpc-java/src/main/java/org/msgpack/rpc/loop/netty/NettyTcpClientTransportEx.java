@@ -48,14 +48,24 @@ import org.msgpack.rpc.config.TcpClientConfig;
 import org.msgpack.rpc.transport.PooledStreamClientTransport;
 import org.msgpack.rpc.transport.RpcMessageHandlerEx;
 
+/**
+ * NettyTcpClientTransport拡張クラス.
+ * @author kishimoto
+ *
+ */
 class NettyTcpClientTransportEx extends PooledStreamClientTransport<Channel, ChannelBufferOutputStream> {
     private static final String TCP_NO_DELAY = "tcpNoDelay";
 
     private final ClientBootstrap bootstrap;
 
-    NettyTcpClientTransportEx(TcpClientConfig config, Session session,
+    /**
+     * @param config 
+     * @param session 
+     * @param loop 
+     */
+    public NettyTcpClientTransportEx(TcpClientConfig config, Session session,
             NettyEventLoop loop) {
-        // TODO check session.getAddress() instanceof IPAddress
+        // TODO check session.getAddress() instance of IPAddress
         super(config, session);
 
         RpcMessageHandlerEx handler = new RpcMessageHandlerEx(session);
@@ -69,6 +79,9 @@ class NettyTcpClientTransportEx extends PooledStreamClientTransport<Channel, Cha
     }
 
     private final ChannelFutureListener connectListener = new ChannelFutureListener() {
+        /* (非 Javadoc)
+         * @see org.jboss.netty.channel.ChannelFutureListener#operationComplete(org.jboss.netty.channel.ChannelFuture)
+         */
         @Override
         public void operationComplete(ChannelFuture future) throws Exception {
             if (!future.isSuccess()) {
@@ -82,6 +95,9 @@ class NettyTcpClientTransportEx extends PooledStreamClientTransport<Channel, Cha
     };
 
     private final ChannelFutureListener closeListener = new ChannelFutureListener() {
+        /* (非 Javadoc)
+         * @see org.jboss.netty.channel.ChannelFutureListener#operationComplete(org.jboss.netty.channel.ChannelFuture)
+         */
         @Override
         public void operationComplete(ChannelFuture future) throws Exception {
             Channel c = future.getChannel();
@@ -89,44 +105,71 @@ class NettyTcpClientTransportEx extends PooledStreamClientTransport<Channel, Cha
         }
     };
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.PooledStreamClientTransport#startConnection()
+     */
     @Override
     protected void startConnection() {
         ChannelFuture f = bootstrap.connect(session.getAddress().getSocketAddress());
         f.addListener(connectListener);
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.PooledStreamClientTransport#newPendingBuffer()
+     */
     @Override
     protected ChannelBufferOutputStream newPendingBuffer() {
         return new ChannelBufferOutputStream(
                 ChannelBuffers.dynamicBuffer(HeapChannelBufferFactory.getInstance()));
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.PooledStreamClientTransport#resetPendingBuffer(null)
+     */
     @Override
     protected void resetPendingBuffer(ChannelBufferOutputStream b) {
         b.buffer().clear();
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.PooledStreamClientTransport#flushPendingBuffer(null, null)
+     */
     @Override
     protected void flushPendingBuffer(ChannelBufferOutputStream b, Channel c) {
         Channels.write(c, b.buffer());
         b.buffer().clear();
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.PooledStreamClientTransport#closePendingBuffer(null)
+     */
     @Override
     protected void closePendingBuffer(ChannelBufferOutputStream b) {
         b.buffer().clear();
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.PooledStreamClientTransport#sendMessageChannel(null, java.lang.Object)
+     */
     @Override
     protected void sendMessageChannel(Channel c, Object msg) {
         Channels.write(c, msg);
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.PooledStreamClientTransport#closeChannel(null)
+     */
     @Override
     protected void closeChannel(Channel c) {
         c.close();
     }
 
+    /**
+     * @param options 
+     * @param key 
+     * @param value 
+     * @param bootstrap 
+     */
     private static void setIfNotPresent(Map<String, Object> options,
             String key, Object value, ClientBootstrap bootstrap) {
         if (!options.containsKey(key)) {
@@ -134,6 +177,9 @@ class NettyTcpClientTransportEx extends PooledStreamClientTransport<Channel, Cha
         }
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.PooledStreamClientTransport#close()
+     */
     @Override
     public void close() {
         super.close();

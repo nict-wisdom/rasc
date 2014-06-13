@@ -47,67 +47,147 @@ import org.msgpack.rpc.message.RequestMessage;
 import org.msgpack.rpc.reflect.Reflect;
 import org.msgpack.type.Value;
 
+/**
+ * Client拡張クラス.
+ * @author kishimoto
+ *
+ */
 public class ClientEx extends Client {
 
 	protected static ThreadLocal<Map<String, ResponseDataListener>> safeListener = new ThreadLocal<>();
-	//	protected static ThreadLocal<Map<Integer, ResponseDataListener>> responseListener = new ThreadLocal<>();
 	protected static final Map<Integer, ResponseDataListener> responseListener = new ConcurrentHashMap<>();
 	protected static final AtomicInteger newSeqid = new AtomicInteger(0);
 	protected AtomicInteger refAccess = new AtomicInteger(0);
 
+	/**
+	 * コンストラクタ.
+	 * @param address 
+	 * @param config 
+	 * @param loop 
+	 */
 	public ClientEx(Address address, ClientConfig config, EventLoop loop) {
 		super(address, config, loop);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param address 
+	 * @param config 
+	 * @param loop 
+	 * @param reflect 
+	 */
 	public ClientEx(Address address, ClientConfig config, EventLoop loop, Reflect reflect) {
 		super(address, config, loop, reflect);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param address 
+	 */
 	public ClientEx(InetSocketAddress address) {
 		super(address);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param address 
+	 * @param config 
+	 */
 	public ClientEx(InetSocketAddress address, ClientConfig config) {
 		super(address, config);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param address 
+	 * @param config 
+	 * @param loop 
+	 */
 	public ClientEx(InetSocketAddress address, ClientConfig config, EventLoop loop) {
 		super(address, config, loop);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param address 
+	 * @param config 
+	 * @param loop 
+	 * @param reflect 
+	 */
 	public ClientEx(InetSocketAddress address, ClientConfig config, EventLoop loop, Reflect reflect) {
 		super(address, config, loop, reflect);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param address 
+	 * @param loop 
+	 */
 	public ClientEx(InetSocketAddress address, EventLoop loop) {
 		super(address, loop);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param host 
+	 * @param port 
+	 */
 	public ClientEx(String host, int port) throws UnknownHostException {
 		super(host, port);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param host 
+	 * @param port 
+	 * @param config 
+	 */
 	public ClientEx(String host, int port, ClientConfig config)
 			throws UnknownHostException {
 		super(host, port, config);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param host 
+	 * @param port 
+	 * @param config 
+	 * @param loop 
+	 */
 	public ClientEx(String host, int port, ClientConfig config, EventLoop loop)
 			throws UnknownHostException {
 		super(host, port, config, loop);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param host 
+	 * @param port 
+	 * @param loop 
+	 */
 	public ClientEx(String host, int port, EventLoop loop)
 			throws UnknownHostException {
 		super(host, port, loop);
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param host 
+	 * @param port 
+	 * @param loop 
+	 * @param reflect 
+	 */
 	public ClientEx(String host, int port, EventLoop loop, Reflect reflect)
 			throws UnknownHostException {
 		super(host, port, loop, reflect);
 	}
 
-	public void AddListener(String method, ResponseDataListener listen) {
+	/**
+	 * ストリーミング用のイベントリスナーを追加する
+	 * @param method method名
+	 * @param listen リスナ
+	 */
+	public void addListener(String method, ResponseDataListener listen) {
 		Map<String, ResponseDataListener> listeners = safeListener.get();
 		if (listeners == null) {
 			listeners = new HashMap<>();
@@ -116,18 +196,31 @@ public class ClientEx extends Client {
 		listeners.put(method, listen);
 	}
 
+	/**
+	 * Client参照を登録する.
+	 */
 	public void joinClient() {
 		refAccess.incrementAndGet();
 	}
 
+	/**
+	 * Client参照を解除する.
+	 */
 	public void leaveClient() {
 		refAccess.decrementAndGet();
 	}
 
+	/**
+	 * Client参照数を取得する.
+	 * @return
+	 */
 	public int getRefCount() {
 		return refAccess.get();
 	}
 
+	/* (非 Javadoc)
+	 * @see org.msgpack.rpc.Session#onResponse(int, org.msgpack.type.Value, org.msgpack.type.Value)
+	 */
 	@Override
 	public void onResponse(int msgid, Value result, Value error) {
 		FutureImpl f;
@@ -144,6 +237,12 @@ public class ClientEx extends Client {
 		f.setResult(result, error);
 	}
 
+	/**
+	 * ストリーミングハンドラ
+	 * @param msgid 
+	 * @param result 
+	 * @param error 
+	 */
 	public void onResponseData(int msgid, Value result, Value error) {
 		if (responseListener != null) {
 			ResponseDataListener rdl = responseListener.get(msgid);
@@ -153,6 +252,9 @@ public class ClientEx extends Client {
 		}
 	}
 
+	/* (非 Javadoc)
+	 * @see org.msgpack.rpc.Session#sendRequest(java.lang.String, java.lang.Object[])
+	 */
 	@Override
 	public Future<Value> sendRequest(String method, Object[] args) {
 

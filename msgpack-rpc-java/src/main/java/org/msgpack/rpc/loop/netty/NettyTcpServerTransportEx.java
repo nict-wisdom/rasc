@@ -43,13 +43,23 @@ import org.msgpack.rpc.config.TcpServerConfig;
 import org.msgpack.rpc.transport.RpcMessageHandler;
 import org.msgpack.rpc.transport.ServerTransport;
 
+/**
+ * NettyTcpServerTransport拡張クラス.
+ * @author kishimoto
+ *
+ */
 class NettyTcpServerTransportEx implements ServerTransport {
     private Channel listenChannel;
     private final static String CHILD_TCP_NODELAY = "child.tcpNoDelay";
     private final static String REUSE_ADDRESS = "reuseAddress";
     private final ServerBootstrap bootstrap;
 
-    NettyTcpServerTransportEx(TcpServerConfig config, Server server, NettyEventLoop loop) {
+    /**
+     * @param config 
+     * @param server 
+     * @param loop 
+     */
+    public NettyTcpServerTransportEx(TcpServerConfig config, Server server, NettyEventLoop loop) {
         if (server == null) {
             throw new IllegalArgumentException("Server must not be null");
         }
@@ -67,11 +77,21 @@ class NettyTcpServerTransportEx implements ServerTransport {
         this.listenChannel = bootstrap.bind(address.getSocketAddress());
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.transport.ServerTransport#close()
+     */
+    @Override
     public void close() {
         listenChannel.close();
         bootstrap.shutdown();
     }
 
+    /**
+     * @param options 
+     * @param key 
+     * @param value 
+     * @param bootstrap 
+     */
     private static void setIfNotPresent(Map<String, Object> options,
             String key, Object value, ServerBootstrap bootstrap) {
         if (!options.containsKey(key)) {

@@ -40,24 +40,49 @@ import org.msgpack.rpc.loop.EventLoop;
 import org.msgpack.rpc.transport.MessageSendable;
 import org.msgpack.type.Value;
 
+/**
+ * Server拡張クラス.
+ * 
+ * @author kishimoto
+ *
+ */
 public class ServerEx extends Server {
 
+    /**
+     * コンストラクタ.
+     */
     public ServerEx() {
         super();
     }
 
+    /**
+     * コンストラクタ.
+     * @param config 
+     */
     public ServerEx(ClientConfig config) {
         super(config);
     }
 
+    /**
+     * コンストラクタ.
+     * @param loop 
+     */
     public ServerEx(EventLoop loop) {
         super(loop);
     }
 
+    /**
+     * コンストラクタ.
+     * @param config 
+     * @param loop 
+     */
     public ServerEx(ClientConfig config, EventLoop loop) {
         super(config, loop);
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.Server#onRequest(org.msgpack.rpc.transport.MessageSendable, int, java.lang.String, org.msgpack.type.Value)
+     */
     @Override
     public void onRequest(MessageSendable channel, int msgid, String method, Value args) {
         RequestEx request = new RequestEx(channel, msgid, method, args);
@@ -77,6 +102,9 @@ public class ServerEx extends Server {
         }
     }
 
+    /* (非 Javadoc)
+     * @see org.msgpack.rpc.Server#onNotify(java.lang.String, org.msgpack.type.Value)
+     */
     @Override
     public void onNotify(String method, Value args) {
         RequestEx request = new RequestEx(method, args);

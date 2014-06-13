@@ -68,6 +68,9 @@ public class MsgPackClientFactory implements ClientFactory {
 		this.timeout = timeout;
 	}
 
+	/**
+	 * 通信を切断する.
+	 */
 	@Deprecated
 	public void close() {
 		shutdown();
@@ -107,6 +110,10 @@ public class MsgPackClientFactory implements ClientFactory {
 		return create(interfaceClass, url);
 	}
 
+	
+	/**
+	 * 終了処理.
+	 */
 	@Deprecated
 	public void shutdown() {
 		MsgPackClientPool.getInstance().shutdownAllClient();

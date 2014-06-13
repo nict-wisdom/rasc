@@ -37,24 +37,40 @@ import org.msgpack.rpc.message.ResponseDataMessage;
 import org.msgpack.rpc.transport.MessageSendable;
 import org.msgpack.type.Value;
 
+/**
+ * Request拡張クラス.
+ * @author kishimoto
+ *
+ */
 public class RequestEx extends Request {
 
 
-    public RequestEx(MessageSendable channel, int msgid, String method,
-            Value args) {
+    /**
+     * コンストラクタ.
+     * @param channel 
+     * @param msgid 
+     * @param method 
+     * @param args 
+     */
+    public RequestEx(MessageSendable channel, int msgid, String method,Value args) {
         super(channel, msgid, method, args);
     }
 
+    /**
+     * コンストラクタ.
+     * @param method 
+     * @param args 
+     */
     public RequestEx(String method, Value args) {
         super(method, args);
     }
 
-    /* 追加 channel を取得する */
-//    public MessageSendable getChannel(){
-//        return channel;
-//    }
-    
-    public synchronized void responseData(Object result, Object error) {
+    /**
+     * ストリーミングデータ送信.
+     * @param result 
+     * @param error 
+     */
+    public synchronized void sendResponseData(Object result, Object error) {
         if (channel == null) {
             return;
         }

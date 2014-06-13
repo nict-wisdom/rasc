@@ -26,19 +26,38 @@ import org.msgpack.MessagePack;
 import org.msgpack.rpc.ClientEx;
 import org.msgpack.rpc.loop.netty.NettyEventLoopEx;
 
+/**
+ * Msgpackクライアント用のコネクションプールクラス.
+ * @author kishimoto
+ *
+ */
 public class MsgPackClientPool {
 
 	private static final MsgPackClientPool myInstance = new MsgPackClientPool();
 	private Map<InetSocketAddress, ClientEx> poolClient = new HashMap<>();
 
+	/**
+	 * コンストラクタ(非公開).
+	 */
 	private MsgPackClientPool() {
 
 	}
 
+	/**
+	 * インスタンスを取得する.
+	 * @return MsgPackClientPool Instance.
+	 */
 	public static MsgPackClientPool getInstance() {
 		return myInstance;
 	}
 
+	/**
+	 * Msgpackクライアントをコネクションプールから取得する.<BR>
+	 * 存在しない場合には、新規に作成する.
+	 * @param addr  接続先アドレス
+	 * @param timeOut タイムアウト
+	 * @return ClientEx 
+	 */
 	public ClientEx getClient(InetSocketAddress addr, int timeOut) {
 		ClientEx ce = null;
 
@@ -56,6 +75,10 @@ public class MsgPackClientPool {
 		return ce;
 	}
 
+	/**
+	 * 切断処理.指定されたClientExを切断する.
+	 * @param ce ClientEx 
+	 */
 	public void close(ClientEx ce) {
 		boolean execClose = false;
 		synchronized (poolClient) {
@@ -87,6 +110,9 @@ public class MsgPackClientPool {
 		}
 	}
 
+	/**
+	 * 全強制切断処理.
+	 */
 	public void shutdownAllClient() {
 		synchronized (poolClient) {
 			for (Map.Entry<InetSocketAddress, ClientEx> ent : poolClient.entrySet()) {

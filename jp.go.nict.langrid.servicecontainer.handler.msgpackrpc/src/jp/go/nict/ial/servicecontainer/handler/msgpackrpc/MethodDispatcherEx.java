@@ -122,7 +122,7 @@ public class MethodDispatcherEx extends MethodDispatcher {
 
 					@Override
 					public boolean receive(Object result) {
-						requestEx.responseData(result, null);
+						requestEx.sendResponseData(result, null);
 						return true;
 					}
 				});

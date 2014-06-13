@@ -44,25 +44,41 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 	private Object proxyInvocation = null;
 	private ClientEx client = null;
 	private Class<T> interfaceClass = null;
-	private InetSocketAddress address = null;
 	private final ThreadLocal<ArrayElementsReceiver<Object>> rcv = new ThreadLocal<>();
 
+	/**
+	 * デフォルトコンストラクタ.
+	 */
 	public MsgPackRpcInvocationHandler() {
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param clsz Interfaces class.
+	 */
 	public MsgPackRpcInvocationHandler(Class<T> clsz) {
 		this();
 		interfaceClass = clsz;
 
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param address 接続先アドレス
+	 * @param clsz Interfaces class.
+	 */
 	public MsgPackRpcInvocationHandler(InetSocketAddress address, Class<T> clsz) {
-		this(address, 300, clsz);//default time out is 300 sec
+		this(address, 300, clsz);//default time out is 300 seconds.
 	}
 
+	/**
+	 * コンストラクタ.
+	 * @param address 接続先アドレス
+	 * @param timeOut タイムアウト(秒)
+	 * @param clsz Interfaces class.
+	 */
 	public MsgPackRpcInvocationHandler(InetSocketAddress address, int timeOut, Class<T> clsz) {
 		this(clsz);//default
-		this.address = address;
 		client = MsgPackClientPool.getInstance().getClient(address, timeOut);
 		proxyInvocation = client.proxy(clsz);
 	}
@@ -89,7 +105,7 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 					// receiverが登録されている場合は、それを利用する。
 					final ArrayElementsReceiver<Object> receiver = rcv.get();
 
-					client.AddListener(method.getName(), new ResponseDataListener() {
+					client.addListener(method.getName(), new ResponseDataListener() {
 						@Override
 						public void onResponseData(int msgid, Value result, Value error) {
 							Object recv = null;
@@ -105,22 +121,12 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 					return method.invoke(proxyInvocation, args);
 				} else {
 					//receiverが無い場合には、デフォルトを用意して、格納しておく
-					final List<Object> defList = new ArrayList<>();
 					final List<Value> resValue = new ArrayList<>();
 
-					client.AddListener(method.getName(), new ResponseDataListener() {
+					client.addListener(method.getName(), new ResponseDataListener() {
 						@Override
 						public void onResponseData(int msgid, Value result, Value error) {
 							resValue.add(result);
-							
-//							Object recv = null;
-//							
-//							try {
-////								recv = mp.convert(result, convertType);
-////								defList.add(recv);
-//							} catch (IOException e) {
-//								e.printStackTrace();
-//							}
 						}
 					});
 
@@ -139,11 +145,10 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 					int index = 0;
 					Object arrObj = Array.newInstance(convertType, maxSize);
 					
-					//Streaming
+					//Convert StreamingResults 
 					for(Value v:resValue){
 						Array.set(arrObj, index++, mp.convert(v, convertType));
 					}
-					
 					//result
 					System.arraycopy(result, 0, arrObj, index, nResultCnt);
 					return arrObj;
@@ -166,6 +171,9 @@ class MsgPackRpcInvocationHandler<T> implements InvocationHandler, Closeable, Ar
 		rcv.set(receiver);
 	}
 
+	/* (非 Javadoc)
+	 * @see java.io.Closeable#close()
+	 */
 	@Override
 	public void close() throws IOException {
 		if (client != null) {
