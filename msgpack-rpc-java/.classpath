@@ -11,13 +11,9 @@
 			<attribute name="owner.project.facets" value="jst.utility"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java7">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/slf4j/slf4j-api-1.7.5.jar"/>
 	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/slf4j/slf4j-jdk14-1.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/netty-3.9.0.Final.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
