@@ -58,7 +58,7 @@
     <copy todir="build/jar/WEB-INF/serviceimpl/">
       <fileset dir="sample/WEB-INF/serviceimpl/" includes="*.xml" />
     </copy>
-    <copy file="./sample/logger.property" tofile="build/jar/logger.property" />
+    <copy file="./sample/logging.properties" tofile="build/jar/logging.properties" />
     <copy file="./sample/SampleClient.java" tofile="build/jar/SampleClient.java" />
     <copy file="./sample/server.sh" tofile="build/jar/server.sh"/>
 
