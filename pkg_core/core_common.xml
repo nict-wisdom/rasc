@@ -39,6 +39,7 @@
     <fileset dir="${rasc.lib}/lib/json/" includes="**/*.jar" />
     <fileset dir="${rasc.lib}/lib/jettymsgpack/" includes="**/*.jar" />
     <fileset dir="${rasc.lib}/lib/mustache/" includes="**/*.jar" />
+    <fileset dir="${rasc.lib}/lib/jetty9/" includes="servlet-api-3.0.jar" />
   </path>
 
   <path id="rasc_core.classpath">

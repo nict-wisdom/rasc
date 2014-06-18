@@ -29,7 +29,17 @@
     <build-jar project.name="jp.go.nict.wisdom.wrapper.api" src.dir="${rasc.path}/jp.go.nict.wisdom.wrapper.api/src" dest.dir="${rasc_core.path}/build" />
   </target>
 
-  <target name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" depends="jp.go.nict.wisdom.wrapper.api">
+  <target name="jp.go.nict.rasc.service.initializer" depends="jp.go.nict.wisdom.wrapper.api">
+    <build-jar project.name="jp.go.nict.rasc.service.initializer" src.dir="${rasc.path}/jp.go.nict.rasc.service.initializer/src" dest.dir="${rasc_core.path}/build" />
+  </target>
+
+  <target name="jp.go.nict.isp.wisdom2013.api" depends="jp.go.nict.rasc.service.initializer">
+    <build-jar project.name="jp.go.nict.isp.wisdom2013.api" src.dir="${rasc.path}/jp.go.nict.isp.wisdom2013.api/src" dest.dir="${rasc_core.path}/build" />
+  </target>
+
+
+
+  <target name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" depends="jp.go.nict.isp.wisdom2013.api">
     <build-jar project.name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" src.dir="${rasc.path}/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" dest.dir="${rasc_core.path}/build" />
   </target>
 
