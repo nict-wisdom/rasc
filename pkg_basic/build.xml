@@ -20,7 +20,7 @@
   </target>
 
   <target name="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" depends="init">
-    <ant antfile="../../rasc/pkg_core/build.xml" target="build_core" />
+    <ant antfile="../pkg_core/build.xml" target="build_core" />
     <build-jar project.name="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" src.dir="${rasc.path}/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc/src" dest.dir="build">
       <cplist>
 	<fileset dir="../jp.go.nict.isp.wisdom2013.lib/lib" includes="**/*.jar" />
