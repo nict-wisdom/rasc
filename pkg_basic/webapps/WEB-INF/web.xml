@@ -49,6 +49,11 @@
     <servlet-name>SOAPMonitorService</servlet-name>
     <url-pattern>/SOAPMonitor</url-pattern>
   </servlet-mapping>
+	<servlet>
+		<servlet-name>InitializeServlet</servlet-name>
+		<servlet-class>jp.go.nict.rasc.service.initializer.servlet.InitializerServlet</servlet-class>
+		<load-on-startup>10</load-on-startup>
+	</servlet>
   <mime-mapping>
     <extension>wsdl</extension>
     <mime-type>text/xml</mime-type>

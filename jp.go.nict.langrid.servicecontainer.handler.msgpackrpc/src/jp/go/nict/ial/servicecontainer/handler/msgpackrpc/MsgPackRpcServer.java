@@ -60,6 +60,8 @@ import org.xml.sax.SAXException;
  */
 public class MsgPackRpcServer {
 
+	private static final String INITIALIZER_CLASS_NAME="jp.go.nict.rasc.service.api.ServiceInitializer";
+	
 	/**
 	 * サンプルメイン.
 	 * @param args 引数配列
@@ -273,7 +275,7 @@ public class MsgPackRpcServer {
 
 		for (Class<?> clsIf : factory.getInterfaces()) {
 			//			System.out.println(clsIf.getName());
-			if (clsIf.getName().equals("jp.go.nict.wisdom.wrapper.status.ServiceInitialize")) {
+			if (clsIf.getName().equals(INITIALIZER_CLASS_NAME)) {
 				for (Method m : clsIf.getMethods()) {
 					//					System.out.println(m.getName());
 					if (m.getName().equals("init")) {

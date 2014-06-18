@@ -20,10 +20,10 @@ package jp.go.nict.wisdom.wrapper;
 import java.util.List;
 import java.util.logging.Logger;
 
-import jp.go.nict.wisdom.wrapper.status.ServiceInitialize;
+import jp.go.nict.rasc.service.api.ServiceInitializer;
 import jp.go.nict.wisdom.wrapper.status.ServiceStatus;
 
-public abstract class AbstractAnalysisService implements ServiceStatus, ServiceInitialize {
+public abstract class AbstractAnalysisService implements ServiceStatus, ServiceInitializer {
 	private static Logger logger = Logger.getLogger(AbstractAnalysisService.class.getName());
 
 	protected String cmdLine;

@@ -15,8 +15,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jp.go.nict.wisdom.wrapper.status;
+package jp.go.nict.rasc.service.api;
 
-public interface ServiceInitialize {
+public interface ServiceInitializer {
 	void init();
 }
