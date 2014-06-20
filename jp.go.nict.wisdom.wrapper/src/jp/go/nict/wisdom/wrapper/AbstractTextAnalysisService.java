@@ -17,8 +17,13 @@
 
 package jp.go.nict.wisdom.wrapper;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
+import jp.go.nict.wisdom.daemonizer.command.CommandPool;
 import jp.go.nict.wisdom.wrapper.api.TextAnalysisService;
 
 public abstract class AbstractTextAnalysisService
@@ -27,29 +32,32 @@ public abstract class AbstractTextAnalysisService
 
 	private static Logger logger = Logger.getLogger(AbstractTextAnalysisService.class.getName());
 
-	protected TextAnalysisServiceImpl impl;
-
+	protected static Map<String, CommandPool<String, String>> cmdPoolMap = new HashMap<>();
+	
 	public AbstractTextAnalysisService() {
 		logger.info("new AbstractTextAnalysisService()");
 	}
 
 	@Override
 	public String analyze(String text) throws Exception {
+		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getCmdLineAsKey()));
 		return impl.analyze(text);
 	}
 
 	@Override
 	public String[] analyzeArray(String[] text) throws Exception {
+		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getCmdLineAsKey()));
 		 return impl.analyzeArray(text);
 	}
 
 	@Override
-	public void init() {
-		impl.init();
-	}
-
-	@Override
 	public String getStatus() {
+		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getCmdLineAsKey()));
 		return impl.getStatus();
+	}
+	
+	protected String getCmdLineAsKey() {
+		if (!cmdLine.isEmpty()) return cmdLine;
+		return StringUtils.join(cmdArray, " ");
 	}
 }

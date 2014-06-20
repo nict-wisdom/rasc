@@ -28,19 +28,23 @@ public class StdIOCommandService extends AbstractTextAnalysisService {
 	private static Logger logger = Logger.getLogger(StdIOCommandService.class.getName());
 
 	public StdIOCommandService() {
-		logger.info("new StandardInputService()");
+		logger.info("new StdIOCommandService()");
 	}
 
 	@Override
 	public void init() {
-		impl = new TextAnalysisServiceImpl(new CommandPool<String, String>(
+		if (cmdPoolMap.containsKey(getCmdLineAsKey())) return;
+		
+		CommandPool<String, String> cmdPool = new CommandPool<String, String>(
 				cmdLine, cmdArray, directory, delimiterIn, delimiterOut,
 				delLastNewline, includeDelim, timeOut, startWait, restartWait,
 				bufSize, pollTimeOut, poolSize, initPoolSize) {
-			public Command<String, String> getInstance() throws IOException, InterruptedException {
-				return getInstance(StandardInputCommand.class);
-			}
-		});
-		super.init();
+					public Command<String, String> getInstance() throws IOException, InterruptedException {
+					return getInstance(StandardInputCommand.class);
+				}
+		};
+		// 本当はキーはサービス名の方がいい
+		cmdPoolMap.put(getCmdLineAsKey(), cmdPool);
+		cmdPool.init();
 	}
 }

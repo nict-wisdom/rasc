@@ -30,10 +30,6 @@ public class AnalysisServiceImpl<I, O> {
 		return ret + System.getProperty("line.separator");
 	}
 
-	public void init() {
-		cmdPool.init();
-	}
-
 	public int getPooledSize() {
 		return cmdPool.getSize();
 	}
