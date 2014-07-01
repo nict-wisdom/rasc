@@ -37,7 +37,8 @@ import jp.go.nict.langrid.servicecontainer.handler.ServiceLoader;
  */
 public class InitializerServlet extends HttpServlet {
 
-	private static final String INITIALIZER_CLASS_NAME="jp.go.nict.rasc.service.api.ServiceInitializer";
+	private static final String INITIALIZER_CLASS_NAME = "jp.go.nict.rasc.service.api.ServiceInitializer";
+	private static final String ABSTRACT_SERVICES_CLASS_NAME = "jp.go.nict.langrid.servicecontainer.service.AbstractService";
 
 	/* (非 Javadoc)
 	 * @see javax.servlet.GenericServlet#init()
@@ -71,8 +72,17 @@ public class InitializerServlet extends HttpServlet {
 			for (String s : loader.listServiceNames()) {
 				ServiceFactory f = loader.loadServiceFactory(cl, s);
 				Object service = f.getService();
+
+				/* setServiceName があれば、service名をセットする*/
+				for (Method m : service.getClass().getMethods()) {
+					if (m.getName().equals("setServiceName") && m.getDeclaringClass().getName().equals(ABSTRACT_SERVICES_CLASS_NAME)) {
+						m.invoke(service, s);
+						break;
+					}
+				}
+
 				for (Class<?> clazz : f.getInterfaces()) {
-					
+
 					/* 初期化用のInterfaceを持つものは、サービスのinitを呼び出し */
 					if (clazz.getName().equals(INITIALIZER_CLASS_NAME)) {
 						for (Method m : clazz.getMethods()) {
