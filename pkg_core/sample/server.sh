@@ -4,7 +4,7 @@ BASEDIR=`dirname $0`
 BASEDIR=`(cd "$BASEDIR"; pwd)`
 nowTime=`date '+%Y%m%d-%H%M%S'`
 
-JAVA_OPTS=-Djava.util.logging.config.file=./logging.properties -Dfile.encoding=UTF-8
+JAVA_OPTS="-Xmx1G -Djava.util.logging.config.file=./logging.properties -Dfile.encoding=UTF-8"
 
 LOGDIR=$BASEDIR/logs
 if [ ! -d "$LOGDIR" ]; then
