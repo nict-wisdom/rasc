@@ -33,7 +33,7 @@ public class StdIOCommandService extends AbstractTextAnalysisService {
 
 	@Override
 	public void init() {
-		if (cmdPoolMap.containsKey(getCmdLineAsKey())) return;
+		if (cmdPoolMap.containsKey(getServiceName())) return;
 		
 		CommandPool<String, String> cmdPool = new CommandPool<String, String>(
 				cmdLine, cmdArray, directory, delimiterIn, delimiterOut,
@@ -43,8 +43,8 @@ public class StdIOCommandService extends AbstractTextAnalysisService {
 					return getInstance(StandardInputCommand.class);
 				}
 		};
-		// 本当はキーはサービス名の方がいい
-		cmdPoolMap.put(getCmdLineAsKey(), cmdPool);
+
+		cmdPoolMap.put(getServiceName(), cmdPool);
 		cmdPool.init();
 	}
 }
