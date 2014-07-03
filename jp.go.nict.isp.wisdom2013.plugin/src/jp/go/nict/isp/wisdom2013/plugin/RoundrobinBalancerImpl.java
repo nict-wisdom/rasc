@@ -52,7 +52,13 @@ public class RoundrobinBalancerImpl implements EndpointBalancer {
 		if (!roundrobin.containsKey(sig)) {
 			roundrobin.put(sig, new AtomicInteger(0));
 		}
-		index = roundrobin.get(sig).getAndIncrement() % list.size();
+		int range = roundrobin.get(sig).getAndIncrement();
+
+		if ((range < 0) || (range >= Integer.MAX_VALUE)) {
+			roundrobin.get(sig).set(0);
+		}
+
+		index = range % list.size();
 
 		return list.get(index);
 	}
