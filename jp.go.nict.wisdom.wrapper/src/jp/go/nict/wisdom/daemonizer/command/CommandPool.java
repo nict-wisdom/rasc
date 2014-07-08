@@ -49,6 +49,7 @@ public abstract class CommandPool<I, O> {
 		this.delimiterOut = delimiterOut;
 		this.delLastNewline = delLastNewline;
 		this.includeDelim = includeDelim;
+		this.timeOut = timeOut;
 		this.startWait = startWait;
 		this.restartWait = restartWait;
 		this.bufSize = bufSize;
