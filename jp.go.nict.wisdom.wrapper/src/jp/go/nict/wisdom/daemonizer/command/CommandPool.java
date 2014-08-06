@@ -13,9 +13,9 @@ import java.util.logging.Logger;
 
 
 public abstract class CommandPool<I, O> {
-	
+
 	private static Logger logger = Logger.getLogger(CommandPool.class.getName());
-	
+
 	protected final AtomicInteger numCmd = new AtomicInteger();
 
 	protected BlockingQueue<Command<I, O>> cmdPool = new LinkedBlockingQueue<>();
@@ -37,8 +37,8 @@ public abstract class CommandPool<I, O> {
 	protected int poolSize = 10;
 	protected int initPoolSize = 1;
 
-	public CommandPool(String cmdLine, List<String> cmdArray, String directory, String delimiterIn, String delimiterOut, 
-			boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartWait, 
+	public CommandPool(String cmdLine, List<String> cmdArray, String directory, String delimiterIn, String delimiterOut,
+			boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartWait,
 			int bufSize, int pollTimeOut, int poolSize, int initPoolSize) {
 		logger.info("new CommandPool()");
 
@@ -57,10 +57,18 @@ public abstract class CommandPool<I, O> {
 		this.initPoolSize = initPoolSize;
 	}
 
-	public int getSize() {
-		return numCmd.get();
+	public int getPooledSize() {
+		return numCmd.get() > poolSize ? poolSize : numCmd.get();
 	}
-	
+
+	public int getMaxPoolSize() {
+		return poolSize;
+	}
+
+	public int getPoolingSize() {
+		return cmdPool.size();
+	}
+
 	public abstract Command<I, O> getInstance() throws IOException, InterruptedException;
 
 	public Command<I, O> getInstance(Class<? extends Command<I, O>> cmdClass) throws IOException, InterruptedException {
@@ -84,7 +92,7 @@ public abstract class CommandPool<I, O> {
 				Class<?>[] argType = {String[].class, String.class, String.class, String.class, boolean.class, boolean.class, int.class, int.class, int.class, int.class};
 				Constructor<? extends Command<I, O>> constructor;
 				constructor = cmdClass.getConstructor(argType);
-				cmd = constructor.newInstance(exeCmd, directory, delimiterIn, delimiterOut, delLastNewline, 
+				cmd = constructor.newInstance(exeCmd, directory, delimiterIn, delimiterOut, delLastNewline,
 						includeDelim, timeOut, startWait, restartWait, bufSize);
 			} catch (InstantiationException | IllegalAccessException
 					| IllegalArgumentException | InvocationTargetException
@@ -123,7 +131,7 @@ public abstract class CommandPool<I, O> {
 		cmdPool.add(cmd);
 		logger.finest("Retuned a process to pool.");
 	}
-	
+
 	public void init() {
 		int size = initPoolSize > poolSize ? 1 : initPoolSize;
 		logger.info("init() initSize = " + size);
