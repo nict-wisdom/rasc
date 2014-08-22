@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
-
 import jp.go.nict.wisdom.daemonizer.command.CommandPool;
 import jp.go.nict.wisdom.wrapper.api.TextAnalysisService;
 
@@ -40,24 +38,19 @@ public abstract class AbstractTextAnalysisService
 
 	@Override
 	public String analyze(String text) throws Exception {
-		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getCmdLineAsKey()));
+		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getServiceName()));
 		return impl.analyze(text);
 	}
 
 	@Override
 	public String[] analyzeArray(String[] text) throws Exception {
-		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getCmdLineAsKey()));
+		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getServiceName()));
 		 return impl.analyzeArray(text);
 	}
 
 	@Override
 	public String getStatus() {
-		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getCmdLineAsKey()));
+		TextAnalysisServiceImpl impl = new TextAnalysisServiceImpl(cmdPoolMap.get(getServiceName()));
 		return impl.getStatus();
-	}
-	
-	protected String getCmdLineAsKey() {
-		if (!cmdLine.isEmpty()) return cmdLine;
-		return StringUtils.join(cmdArray, " ");
 	}
 }

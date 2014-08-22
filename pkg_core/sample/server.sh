@@ -4,6 +4,8 @@ BASEDIR=`dirname $0`
 BASEDIR=`(cd "$BASEDIR"; pwd)`
 nowTime=`date '+%Y%m%d-%H%M%S'`
 
+JAVA_OPTS="-Xmx1G -Djava.util.logging.config.file=./logging.properties -Dfile.encoding=UTF-8"
+
 LOGDIR=$BASEDIR/logs
 if [ ! -d "$LOGDIR" ]; then
     mkdir "$LOGDIR"
@@ -22,7 +24,7 @@ start() {
 	echo $SERVICE" started."
 	LOGFILE=$LOGDIR/$NAME.$nowTime.log
 	LOGLINK=$LOGDIR/$NAME.log
-	java -Djava.util.logging.config.file=./logging.properties -Dfile.encoding=UTF-8 -classpath ./lib/*: jp.go.nict.ial.servicecontainer.handler.msgpackrpc.MsgPackRpcServer $SERVICE $PORT > "$LOGFILE" 2>&1 &
+	java $JAVA_OPTS -classpath ./lib/*: jp.go.nict.ial.servicecontainer.handler.msgpackrpc.MsgPackRpcServer $SERVICE $PORT > "$LOGFILE" 2>&1 &
 	echo $! > "$PID"
 	ln -sf "$LOGFILE" "$LOGLINK"
 	sleep 1
