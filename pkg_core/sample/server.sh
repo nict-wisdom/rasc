@@ -31,7 +31,10 @@ start() {
 
 stop(){
     if [ -e "$PID" ]; then
-	kill `cat "$PID"`
+	ps -p `cat "$PID"` >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		kill `cat "$PID"`
+	fi
 	rm -f "$PID"
 	echo "$SERVICE has been stopped."
     else
