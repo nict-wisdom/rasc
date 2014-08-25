@@ -138,6 +138,7 @@ public class FluentLoggerDecorator implements Decorator {
 							put("method", request.getMethod().getName());
 							put("start", CalendarUtil.formatToW3CDTF(c));
 							put("hostname", InetAddress.getLocalHost().getHostName().split("\\.")[0]);
+							put("ip", InetAddress.getLocalHost().getHostAddress());
 							put("elapse", d);
 							put("input", input);
 							put("output", output);
