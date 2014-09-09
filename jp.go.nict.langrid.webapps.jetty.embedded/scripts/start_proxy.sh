@@ -13,7 +13,7 @@ JettyTempPath=/tmp
 umask 002
 
 #web app context
-ProxyServerPid=/tmp/proxy.pid;
+ProxyServerPid=$JettyTempPath/proxy.pid;
 
 echo "********************************************************";
 echo "*ProxyServer Loader";
