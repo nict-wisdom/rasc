@@ -235,11 +235,11 @@
 		<mkdir dir="build/war" />
 		<mkdir dir="build/deploy" />
 
-		<make-war project.name="jp.go.nict.isp.webapps.samplesearch.server" base.dir="${rasc.path}" dest.dir="build" wrapper.name="jp.go.nict.isp.webapps.samplesearch.server">
+		<make-war project.name="jp.go.nict.isp.webapps.samplesearch.server" base.dir="${rasc.path}" dest.dir="build" wrapper.name="jp.go.nict.isp.wrapper.samplesearch.server">
 			<liblist>
 			</liblist>
 		</make-war>
-		<make-war project.name="jp.go.nict.isp.webapps.samplesearch.worker" base.dir="${rasc.path}" dest.dir="build" wrapper.name="jp.go.nict.isp.webapps.samplesearch.worker">
+		<make-war project.name="jp.go.nict.isp.webapps.samplesearch.worker" base.dir="${rasc.path}" dest.dir="build" wrapper.name="jp.go.nict.isp.wrapper.samplesearch.worker">
 			<liblist>
 			</liblist>
 		</make-war>
