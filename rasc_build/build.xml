@@ -224,10 +224,6 @@
 			<cplist>
 			</cplist>
 		</build-jar>
-		<build-jar project.name="jp.go.nict.ial.webapps.wisdom.proxy" src.dir="${rasc.path}/jp.go.nict.ial.webapps.wisdom.proxy/src" dest.dir="build">
-			<cplist>
-			</cplist>
-		</build-jar>
 	</target>
 
 	<!-- Create war files. -->
@@ -243,7 +239,7 @@
 			<liblist>
 			</liblist>
 		</make-war>
-		<make-war project.name="jp.go.nict.ial.webapps.wisdom.proxy" base.dir="${rasc.path}" dest.dir="build" wrapper.name="jp.go.nict.ial.webapps.wisdom.proxy">
+		<make-war project.name="jp.go.nict.ial.webapps.wisdom.proxyservice" base.dir="${rasc.path}" dest.dir="build" wrapper.name="jp.go.nict.ial.webapps.wisdom.proxy">
 			<liblist>
 			</liblist>
 		</make-war>
