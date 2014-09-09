@@ -23,13 +23,13 @@ env.use_ssh_config = True
 #########################################################
 # General
 #########################################################
-repos_work='repos_work'
+env.repos_work='repos_work'
 env.repos_update=True
 
 def _clean():
-	cmd = 'cd {0} ; '.format(repos_work)
+	cmd = 'cd {0} ; '.format(env.repos_work)
 	if env.repos_update==True:
-		cmd = cmd + ' git reset --hard HEAD ; git checkout -f {0} '.format(env['repository']['repos.branch'])
+		cmd = cmd + env['repository']['repos.clean']
 	local(cmd)
 	
 
@@ -41,7 +41,7 @@ def _make_host_list(hosts):
 
 @runs_once
 def _ant_clean():
-	local('cd {0}/rasc_build ;ant clean'.format(repos_work))
+	local('cd {0}/{1} ;ant clean'.format(env.repos_work,env['repository']['repos.build']))
 
 
 def _make_services_list(sv):
@@ -72,14 +72,15 @@ def _make_services_key_list(sv):
 
 def _patch_src(patchfile):
 	print '## patchを当てます'
-	local('cd {0} ; patch -p1 < ../{1}'.format(repos_work,patchfile))
+	current = os.getcwd()
+	local('cd {0}/{1} ; patch -p1 < {2}/{3}'.format(env.repos_work,env['repository']['repos.target'],current,patchfile))
 	
 
 
 #####################################
 # config 設定ファイル読み込み
 #####################################
-def config(conf="wisdom2013.properties"):
+def config(conf):
 	_read_config(conf)
 	_check_config()
 
@@ -94,6 +95,7 @@ def _read_config(conf_file):
 			sect_conf[attr] = value
 		setattr(env, section, sect_conf)
 	env.read_config=True
+	env.repos_work = env['repository']['repos.workdir']
 
 def _check_config():
 	#設定ファイルのservices整合性をチェック
@@ -148,16 +150,14 @@ def checkout(Update=True):
 def _checkout():
 	# リポジトリからチェックアウト、既に存在している場合には、updateする
 	print "## リポジトリからチェックアウトします。"
-	if os.path.exists(repos_work)==False:
-		os.mkdir(repos_work)
-#		local('hg clone {0} {1} -u {2} -b {3} '.format(env['repository']['repos.url'],repos_work,env['repository']['repos.branch'],env['repository']['repos.branch']))
-		local('git clone {0} {1}'.format(env['repository']['repos.url'],repos_work))
+	if os.path.exists(env.repos_work)==False:
+		os.mkdir(env.repos_work)
+		local('cd {0} ; '.format(env.repos_work) + env['repository']['repos.clone'])
 	else:
-		cmd = 'cd {0} ; '.format(repos_work)
+		cmd = 'cd {0} ; '.format(env.repos_work)
 		if env.repos_update==True:
-#			cmd = cmd + 'hg pull ; hg update -C {0} '.format(env['repository']['repos.branch'])
-                        cmd = cmd + 'git reset --hard HEAD ; git pull ../{0} ; git checkout -f {1}'.format(env['repository']['repos.url'], env['repository']['repos.branch'])
-                local(cmd)
+			cmd = cmd + env['repository']['repos.pull']
+			local(cmd)
 
 
 #####################################
@@ -192,16 +192,16 @@ def _worker_build(w):
 	workers =  eval(env['workers']['workers'])
 	worker = workers[w]
 	print '## {0} をビルドします'.format(w)
-	local('cd {0}/rasc_build ; ant clean ; ant '.format(repos_work))
+	local('cd {0}/{1} ; ant clean ; ant '.format(env.repos_work,env['repository']['repos.build']))
 
 def _update_worker_sh(w):
 	# 起動停止スクリプトを更新する
 	print '## {0} の起動、停止スクリプトを更新します。'.format(w)
-	sf = '{0}/{1}'.format(repos_work,env['workers']['scripts.start'])
+	sf = '{0}/{1}/{2}'.format(env.repos_work,env['repository']['repos.deploy'],env['workers']['scripts.start'])
 	workers =  eval(env['workers']['workers'])
 	worker = workers[w]
 	services = _make_services_list(worker['services'])
-	jsonfile = '{0}/{1}/worker.json'.format(repos_work,env['jetty']['jetty.script'])
+	jsonfile = '{0}/{1}/{2}/worker.json'.format(env.repos_work,env['repository']['repos.deploy'],env['jetty']['jetty.script'])
 	deploypath = env['deploy']['deploy.path'] + w + "/"
 
 	cd = ' -json {0}{1}/worker.json'.format(deploypath,env['jetty']['jetty.script'])
@@ -244,7 +244,7 @@ def _update_worker_sh(w):
 	.format(sf,cd, env['deploy']['deploy.path'],w,sf+".work"))
 	local('cp {0} {1}'.format(sf+".work",sf))
 	
-	sf = '{0}/{1}'.format(repos_work,env['workers']['scripts.stop'])
+	sf = '{0}/{1}/{2}'.format(env.repos_work,env['repository']['repos.deploy'],env['workers']['scripts.stop'])
 	local('cat {0} | sed -e \'s#^\\([^/]*\\)\\(.*pid\\)#\\1 {1}{2}/tmp/runallworker.pid #g\' > {3}'.format(sf, env['deploy']['deploy.path'],w,sf+".work"))
 	local('cp {0} {1}'.format(sf+".work",sf))
 
@@ -291,7 +291,7 @@ def _modifyEndponts(s,w):
 	workers =  eval(env['workers']['workers'])
 	worker = workers[w[0]]
 	servicetypes = eval(env['servicetypes']['servicetypes'])
-	files = glob.glob('{0}/{1}/WebContent/WEB-INF/services/{2}.xml'.format(repos_work,s['server']['path'],s['server']['name']))
+	files = glob.glob('{0}/{1}/{2}/WebContent/WEB-INF/services/{3}.xml'.format(env.repos_work,env['repository']['repos.target'],s['server']['path'],s['server']['name']))
         value = ""
 	#サービスXMLの個数実施（通常は1)
 	for xml in files:
@@ -361,7 +361,7 @@ def _modifyEndponts(s,w):
 				ep.append( re.sub(r'http://[0-9.:]+/','http://{0}:{1}/'.format(url,worker['port']),value))
 		endpoints.append(ep)
 	jsonData['endpoints'] = endpoints
-	jf = open('{0}/{1}/WebContent/WEB-INF/endpoints.json'.format(repos_work,s['server']['path']),"w")
+	jf = open('{0}/{1}/{2}/WebContent/WEB-INF/endpoints.json'.format(env.repos_work,env['repository']['repos.target'],s['server']['path']),"w")
 	jf.write(json.dumps(jsonData, sort_keys=True, indent=4))
 	jf.close()
 	
@@ -370,16 +370,16 @@ def _server_build(s):
 	_ant_clean()
 	_update_service_xml(s)
 	print '## {0} をビルドします'.format(s)
-	local('cd {0}/rasc_build ;ant '.format(repos_work))
+	local('cd {0}/{1} ;ant '.format(env.repos_work,env['repository']['repos.build']))
 
 def _update_server_sh(s):
 	# 起動停止スクリプトを更新する
 	print '## {0} の起動、停止スクリプトを更新します。'.format(s)
-	sf = '{0}/{1}'.format(repos_work,env['servers']['scripts.start'])
+	sf = '{0}/{1}/{2}'.format(env.repos_work,env['repository']['repos.deploy'],env['servers']['scripts.start'])
 	servers =  eval(env['servers']['servers'])
 	server = servers[s]
 	services = _make_services_list(server['services'])
-	jsonfile = '{0}/{1}/server.json'.format(repos_work,env['jetty']['jetty.script'])
+	jsonfile = '{0}/{1}/{2}/server.json'.format(env.repos_work,env['repository']['repos.deploy'],env['jetty']['jetty.script'])
 	deploypath = env['deploy']['deploy.path'] + s + "/"
 	cd = ' -json {0}{1}/server.json'.format(deploypath,env['jetty']['jetty.script'])
 
@@ -421,7 +421,7 @@ def _update_server_sh(s):
 	.format(sf,cd, env['deploy']['deploy.path'],s,sf+".work"))
 	local('cp {0} {1}'.format(sf+".work",sf))
 	
-	sf = '{0}/{1}'.format(repos_work,env['servers']['scripts.stop'])
+	sf = '{0}/{1}/{2}'.format(env.repos_work,env['repository']['repos.deploy'],env['servers']['scripts.stop'])
 	local('cat {0} | sed -e \'s#^\\([^/]*\\)\\(.*pid\\)#\\1 {1}{2}/tmp/runallserver.pid #g\' > {3}'.format(sf, env['deploy']['deploy.path'],s,sf+".work"))
 	local('cp {0} {1}'.format(sf+".work",sf))
 
@@ -440,10 +440,10 @@ def _deployworkers(w):
 	for sv in wars:
 		if sv['worker']['path'] != 'None':
 			run('mkdir -p {0}/{1}/war'.format(deploypath,sv['worker']['path']))
-			put('{0}/{1}/war/*'.format(repos_work,sv['worker']['path']),'{0}/{1}/war'.format(deploypath,sv['worker']['path']))
+			put('{0}/{1}/{2}/war/*'.format(env.repos_work,env['repository']['repos.deploy'],sv['worker']['path']),'{0}/{1}/war'.format(deploypath,sv['worker']['path']))
 	#jetty
 	run('mkdir -p {0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
-	put('{0}/{1}/*'.format(repos_work,env['jetty']['jetty.project']),'{0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
+	put('{0}/{1}/{2}/*'.format(env.repos_work,env['repository']['repos.deploy'],env['jetty']['jetty.project']),'{0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
 	run('chmod 777 {0}/{1}'.format(deploypath,env['workers']['scripts.start']))
 	run('chmod 777 {0}/{1}'.format(deploypath,env['workers']['scripts.stop']))
 	
@@ -460,10 +460,10 @@ def _deployservers(s):
 	run('mkdir -p {0}/tmp'.format(deploypath))
 	for sv in services:
 		run('mkdir -p {0}/{1}/war'.format(deploypath,sv['server']['path']))
-		put('{0}/{1}/war/*'.format(repos_work,sv['server']['path']),'{0}/{1}/war'.format(deploypath,sv['server']['path']))
+		put('{0}/{1}/{2}/war/*'.format(env.repos_work,env['repository']['repos.deploy'],sv['server']['path']),'{0}/{1}/war'.format(deploypath,sv['server']['path']))
 	#jetty
 	run('mkdir -p {0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
-	put('{0}/{1}/*'.format(repos_work,env['jetty']['jetty.project']),'{0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
+	put('{0}/{1}/{2}/*'.format(env.repos_work,env['repository']['repos.deploy'],env['jetty']['jetty.project']),'{0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
 	run('chmod 777 {0}/{1}'.format(deploypath,env['servers']['scripts.start']))
 	run('chmod 777 {0}/{1}'.format(deploypath,env['servers']['scripts.stop']))
 
@@ -656,7 +656,7 @@ def _proxy_build(slist):
 	_ant_clean()
 	_update_proxy_xml(slist)
 	print '## Proxy をビルドします'
-	local('cd {0}/rasc_build ;ant '.format(repos_work))
+	local('cd {0}/{1} ;ant '.format(env.repos_work,env['repository']['repos.build']))
 
 
 def _update_proxy_xml(slist):
@@ -675,7 +675,7 @@ def _update_proxy_xml(slist):
 			ep.append(url)
 		endpoints.append(ep)
 	jsonData['endpoints'] = endpoints
-	jf = open('{0}/{1}/WebContent/WEB-INF/endpoints.json'.format(repos_work,env['proxyserver']['target.project']),"w")
+	jf = open('{0}/{1}/{2}/WebContent/WEB-INF/endpoints.json'.format(env.repos_work,env['repository']['repos.target'],env['proxyserver']['target.project']),"w")
 	jf.write(json.dumps(jsonData, sort_keys=True, indent=4))
 	jf.close()
 		
@@ -687,7 +687,7 @@ def _write_proxy_xml(s):
 	serviceType = eval(env['servicetypes']['servicetypes'])
 	st = serviceType[env['servers']['server.servicetype']]
 
-	basexml = '{0}/{1}/WebContent/WEB-INF/services/ProxyBase.xml'.format(repos_work,env['proxyserver']['target.project'])
+	basexml = '{0}/{1}/{2}/WebContent/WEB-INF/services/ProxyBase.xml'.format(env.repos_work,env['repository']['repos.target'],env['proxyserver']['target.project'])
 	f = open(basexml, "r")
 	
 	try: 
@@ -726,7 +726,7 @@ def _write_proxy_xml(s):
 		d = minidom.parseString(ElementTree.tostring(root)).toprettyxml(encoding="UTF-8")
 		d = d.replace('<?xml version="1.0" encoding="UTF-8"?>',
 		'<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">')
-		xml = '{0}/{1}/WebContent/WEB-INF/services/{2}.xml'.format(repos_work,env['proxyserver']['target.project'],services[s]['server']['name'])
+		xml = '{0}/{1}/{2}/WebContent/WEB-INF/services/{3}.xml'.format(env.repos_work,env['repository']['repos.target'],env['proxyserver']['target.project'],services[s]['server']['name'])
 		f = open(xml,"w")
 		f.write(d)
 		f.close()
@@ -736,11 +736,11 @@ def _update_proxy_sh(slist):
 	print '## Proxyの起動、停止スクリプトを更新します。'
 	services = eval(env['services']['servicesdef'])
 	proxy =  eval(env['proxyserver']['proxy'])
-	sf = '{0}/{1}'.format(repos_work,env['proxyserver']['scripts.start'])
+	sf = '{0}/{1}/{2}'.format(env.repos_work,env['repository']['repos.deploy'],env['proxyserver']['scripts.start'])
 	cd = ''
 	deploypath = env['deploy']['deploy.path'] + "proxy" + "/"
 	target = env['proxyserver']['target.project']
-	jsonfile = '{0}/{1}/proxy.json'.format(repos_work,env['jetty']['jetty.script'])
+	jsonfile = '{0}/{1}/{2}/proxy.json'.format(env.repos_work,env['repository']['repos.deploy'],env['jetty']['jetty.script'])
 	cd = ' -json {0}{1}/proxy.json'.format(deploypath,env['jetty']['jetty.script'])
 
 	#起動サービス(JSON)書き出し
@@ -782,7 +782,7 @@ def _update_proxy_sh(slist):
 	.format(sf,cd, env['deploy']['deploy.path'],"proxy",sf+".work"))
 	local('cp {0} {1}'.format(sf+".work",sf))
 	
-	sf = '{0}/{1}'.format(repos_work,env['proxyserver']['scripts.stop'])
+	sf = '{0}/{1}/{2}'.format(env.repos_work,env['repository']['repos.deploy'],env['proxyserver']['scripts.stop'])
 	local('cat {0} | sed -e \'s#^\\([^/]*\\)\\(.*pid\\)#\\1 {1}{2}/tmp/proxy.pid #g\' > {3}'.format(sf, env['deploy']['deploy.path'],"proxy",sf+".work"))
 	local('cp {0} {1}'.format(sf+".work",sf))
 
@@ -792,12 +792,12 @@ def _deployproxy():
 	deploypath = env['deploy']['deploy.path'] + "proxy" 
 	run('mkdir -p {0}/tmp'.format(deploypath))
 	run('mkdir -p {0}/{1}/war'.format(deploypath,env['proxyserver']['target.project']))
-	put('{0}/{1}/war/*'.format(repos_work,env['proxyserver']['target.project']),'{0}/{1}/war'.format(deploypath,env['proxyserver']['target.project']))
+	put('{0}/{1}/{2}/war/*'.format(env.repos_work,env['repository']['repos.deploy'],env['proxyserver']['target.project']),'{0}/{1}/war'.format(deploypath,env['proxyserver']['target.project']))
 	#jetty
 	run('mkdir -p {0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
-	put('{0}/{1}/*'.format(repos_work,env['jetty']['jetty.project']),'{0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
-#	put('{0}/rasc_build/build/jp.go.nict.isp.wisdom2013.api.jar'.format(repos_work),'{0}/jp.go.nict.isp.wisdom2013.api.jar'.format(deploypath))
-#	put('{0}/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.service.common_1_2.jar'.format(repos_work),'{0}/jp.go.nict.langrid.service.common_1_2.jar'.format(deploypath))
+	put('{0}/{1}/{2}/*'.format(env.repos_work,env['repository']['repos.deploy'],env['jetty']['jetty.project']),'{0}/{1}'.format(deploypath,env['jetty']['jetty.project']))
+#	put('{0}/rasc_build/build/jp.go.nict.isp.wisdom2013.api.jar'.format(env.repos_work),'{0}/jp.go.nict.isp.wisdom2013.api.jar'.format(deploypath))
+#	put('{0}/jp.go.nict.isp.wisdom2013.lib/lib/langrid/jp.go.nict.langrid.service.common_1_2.jar'.format(env.repos_work),'{0}/jp.go.nict.langrid.service.common_1_2.jar'.format(deploypath))
 	run('chmod 777 {0}/{1}'.format(deploypath,env['proxyserver']['scripts.start']))
 	run('chmod 777 {0}/{1}'.format(deploypath,env['proxyserver']['scripts.stop']))
 
@@ -845,3 +845,105 @@ def _cleanproxy():
 	deploypath = env['deploy']['deploy.path'] + "proxy" + "/"
 	run('rm -rf {0}'.format(deploypath))
 
+
+def deployWhyQAScripts():
+	workers =  eval(env['workers']['workers'])
+	for w in workers:
+		worker = workers[w]
+		env.roledefs.update({'workers' : _make_host_list(worker['host'])})
+		execute(_deployWhyQAScripts,w)
+		
+@roles('workers')
+@parallel
+def _deployWhyQAScripts(w):
+	workers =  eval(env['workers']['workers'])
+	worker = workers[w]
+	deploypath = env['deploy']['deploy.path'] + "/"
+	run('mkdir -p {0}/{1}'.format(deploypath,env['whyqapassage']['whyqapassage.rootpath']))
+	with cd(deploypath):
+		run('{0}'.format(env['whyqapassage']['whyqapassage.deploycmd']))
+		run('sed -e \'s#\\(INDEX=\\)\\(.*\\)#\\1{0}#g\' ./{1} > ./{1}.work'.format(env['whyqapassage']['whyqapassage.index'],env['whyqapassage']['whyqapassage.startsh']))
+		run('cp ./{0}.work ./{0} && chmod u+x,g+x ./{0}'.format(env['whyqapassage']['whyqapassage.startsh']))
+		run('{0}'.format(env['whyqapassage']['rasc.deploycmd']))
+		if(env['whyqapassage'].has_key('tinysvm.deploycmd')==True):
+			run('{0}'.format(env['whyqapassage']['tinysvm.deploycmd']))
+		sedfiles=eval(env['whyqapassage']['rasc.sedfiles'])
+		for s in sedfiles:
+			print s['file']
+			for reg in s['regex']:
+				print reg['before']
+				print reg['after']
+				sed(s['file'], reg['before'],reg['after'])
+#		sed(env['whyqapassage']['whyqapassage.sed.file'],
+#			before=env['whyqapassage']['whyqapassage.sed.before'], after=env['whyqapassage']['whyqapassage.sed.after'] , backup='')
+		#run('cp {0} {1}'.format(env['whyqapassage']['rasc.servcexml.src'],env['whyqapassage']['rasc.servcexml.dst']))
+		run('chmod u+x,g+x {0}'.format(env['whyqapassage']['rasc.startsh']))
+		run('chmod u+x,g+x {0}'.format(env['whyqapassage']['rasc.stopsh']))
+		run('chmod u+x,g+x {0}'.format(env['whyqapassage']['whyqapassage.stopsh']))
+
+def startWhyQApassage():
+	workers =  eval(env['workers']['workers'])
+	for w in workers:
+		worker = workers[w]
+		env.roledefs.update({'workers' : _make_host_list(worker['host'])})
+		execute(_startWhyQApassage,w)
+		
+@roles('workers')
+@parallel
+def _startWhyQApassage(w):
+	workers =  eval(env['workers']['workers'])
+	worker = workers[w]
+	deploypath = env['deploy']['deploy.path']
+	run('{0}{1}'.format(deploypath,env['whyqapassage']['whyqapassage.startsh']),shell=True,pty=False,stdout=sys.stdout)
+
+def startRaSCWhyQA():
+	workers =  eval(env['workers']['workers'])
+	for w in workers:
+		worker = workers[w]
+		env.roledefs.update({'workers' : _make_host_list(worker['host'])})
+		execute(_startRaSCWhyQA,w)
+		
+@roles('workers')
+@parallel
+def _startRaSCWhyQA(w):
+	workers =  eval(env['workers']['workers'])
+	worker = workers[w]
+	deploypath = env['deploy']['deploy.path'] + env['whyqapassage']['rasc.rascpath']
+	with cd(deploypath):
+		startcmd = eval(env['whyqapassage']['rasc.startcmd'])
+		for cmd in startcmd:
+			run('{0}'.format(cmd),shell=True,pty=False)
+			
+			
+def stopWhyQApassage():
+	workers =  eval(env['workers']['workers'])
+	for w in workers:
+		worker = workers[w]
+		env.roledefs.update({'workers' : _make_host_list(worker['host'])})
+		execute(_stopWhyQApassage,w)
+		
+@roles('workers')
+@parallel
+def _stopWhyQApassage(w):
+	workers =  eval(env['workers']['workers'])
+	worker = workers[w]
+	deploypath = env['deploy']['deploy.path']
+	run('cd {0}{1} && {0}{2}'.format(deploypath,env['whyqapassage']['whyqapassage.indexer'],env['whyqapassage']['whyqapassage.stopsh']),shell=True,pty=False,stdout=sys.stdout)
+
+def stopRaSCWhyQA():
+	workers =  eval(env['workers']['workers'])
+	for w in workers:
+		worker = workers[w]
+		env.roledefs.update({'workers' : _make_host_list(worker['host'])})
+		execute(_stopRaSCWhyQA,w)
+		
+@roles('workers')
+@parallel
+def _stopRaSCWhyQA(w):
+	workers =  eval(env['workers']['workers'])
+	worker = workers[w]
+	deploypath = env['deploy']['deploy.path'] + env['whyqapassage']['rasc.rascpath']
+	with cd(deploypath):
+		startcmd = eval(env['whyqapassage']['rasc.stopcmd'])
+		for cmd in startcmd:
+			run('{0}'.format(cmd),shell=True,pty=False)
