@@ -24,5 +24,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/jp.go.nict.isp.wisdom2013.lib/lib/google/guava-15.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
