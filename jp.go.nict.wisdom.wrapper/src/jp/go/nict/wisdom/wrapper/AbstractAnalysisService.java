@@ -34,6 +34,7 @@ public abstract class AbstractAnalysisService extends AbstractService implements
 	protected String directory = null;
 	protected String delimiterIn;
 	protected String delimiterOut;
+	protected boolean useEnvLineSeparator = true;
 	protected boolean delLastNewline = false;
 	protected boolean includeDelim = false;
 
@@ -78,6 +79,14 @@ public abstract class AbstractAnalysisService extends AbstractService implements
 
 	public void setDelimiterOut(String delimiterOut) {
 		this.delimiterOut = delimiterOut;
+	}
+
+	public boolean isUseEnvLineSeparator() {
+		return useEnvLineSeparator;
+	}
+
+	public void setUseEnvLineSeparator(boolean useEnvLineSeparator) {
+		this.useEnvLineSeparator = useEnvLineSeparator;
 	}
 
 	public boolean isDelLastNewline() {

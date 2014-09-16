@@ -35,12 +35,24 @@ public class StandardInputCommand extends DaemonizedStringIOCommand {
 	private boolean delLastNewline = false;
 	private boolean includeDelim = false;
 
-	public StandardInputCommand(String[] cmd, String dir, String delimiterIn, String delimiterOut, boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartwait, int bufSize) {
+	public StandardInputCommand(String[] cmd, String dir, String delimiterIn, String delimiterOut, 
+			boolean useEnvLineSeparator, boolean delLastNewline, boolean includeDelim, int timeOut, 
+			int startWait, int restartwait, int bufSize) {
 		super(cmd, dir, timeOut, startWait, restartwait, bufSize);
-		if(delimiterIn != null)
-			this.delimiterIn = delimiterIn.replaceAll("\\\\n", lineSep);
-		if(delimiterOut != null)
-			this.delimiterOut = delimiterOut.replaceAll("\\\\n", lineSep);
+		if(delimiterIn != null) {
+			if (useEnvLineSeparator) {
+				this.delimiterIn = delimiterIn.replaceAll("\\\\n", lineSep);
+			} else {
+				this.delimiterIn = delimiterIn;
+			}
+		}
+		if(delimiterOut != null) {
+			if (useEnvLineSeparator) {
+				this.delimiterOut = delimiterOut.replaceAll("\\\\n", lineSep);
+			} else {
+				this.delimiterOut = delimiterOut;
+			}
+		}
 		this.delLastNewline = delLastNewline;
 		this.includeDelim = includeDelim;
 	}
@@ -54,7 +66,7 @@ public class StandardInputCommand extends DaemonizedStringIOCommand {
 			}
 		}
 
-		if(input.contains(delimiterIn)){
+		if(!delimiterIn.isEmpty() && input.contains(delimiterIn)){
 			throw new IOException("Delimiter is included in the input data.");
 		}
 

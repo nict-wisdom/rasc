@@ -25,6 +25,7 @@ public abstract class CommandPool<I, O> {
 	private String directory = null;
 	private String delimiterIn;
 	private String delimiterOut;
+	private boolean useEnvLineSeparator;
 	private boolean delLastNewline = false;
 	private boolean includeDelim = false;
 
@@ -37,7 +38,8 @@ public abstract class CommandPool<I, O> {
 	protected int poolSize = 10;
 	protected int initPoolSize = 1;
 
-	public CommandPool(String cmdLine, List<String> cmdArray, String directory, String delimiterIn, String delimiterOut,
+	public CommandPool(String cmdLine, List<String> cmdArray, String directory, 
+			String delimiterIn, String delimiterOut, boolean useEnvLineSeparator,
 			boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartWait,
 			int bufSize, int pollTimeOut, int poolSize, int initPoolSize) {
 		logger.info("new CommandPool()");
@@ -47,6 +49,7 @@ public abstract class CommandPool<I, O> {
 		this.directory = directory;
 		this.delimiterIn = delimiterIn;
 		this.delimiterOut = delimiterOut;
+		this.useEnvLineSeparator = useEnvLineSeparator;
 		this.delLastNewline = delLastNewline;
 		this.includeDelim = includeDelim;
 		this.timeOut = timeOut;
@@ -90,10 +93,12 @@ public abstract class CommandPool<I, O> {
 			int num = numCmd.get();
 			// Create new process
 			try {
-				Class<?>[] argType = {String[].class, String.class, String.class, String.class, boolean.class, boolean.class, int.class, int.class, int.class, int.class};
+				Class<?>[] argType = {String[].class, String.class, String.class, String.class, 
+						boolean.class, boolean.class, boolean.class, int.class, int.class, int.class, int.class};
 				Constructor<? extends Command<I, O>> constructor;
 				constructor = cmdClass.getConstructor(argType);
-				cmd = constructor.newInstance(exeCmd, directory, delimiterIn, delimiterOut, delLastNewline,
+				cmd = constructor.newInstance(exeCmd, directory, delimiterIn, delimiterOut, 
+						useEnvLineSeparator, delLastNewline,
 						includeDelim, timeOut, startWait, restartWait, bufSize);
 			} catch (InstantiationException | IllegalAccessException
 					| IllegalArgumentException | InvocationTargetException
