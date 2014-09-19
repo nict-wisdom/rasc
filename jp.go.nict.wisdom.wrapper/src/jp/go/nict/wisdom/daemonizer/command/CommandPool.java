@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,7 @@ public abstract class CommandPool<I, O> {
 	private String delimiterIn;
 	private String delimiterOut;
 	private boolean useEnvLineSeparator;
+	private Map<String, String> environment;
 	private boolean delLastNewline = false;
 	private boolean includeDelim = false;
 
@@ -39,6 +41,7 @@ public abstract class CommandPool<I, O> {
 	protected int initPoolSize = 1;
 
 	public CommandPool(String cmdLine, List<String> cmdArray, String directory, 
+			Map<String, String> environment,
 			String delimiterIn, String delimiterOut, boolean useEnvLineSeparator,
 			boolean delLastNewline, boolean includeDelim, int timeOut, int startWait, int restartWait,
 			int bufSize, int pollTimeOut, int poolSize, int initPoolSize) {
@@ -47,6 +50,7 @@ public abstract class CommandPool<I, O> {
 		this.cmdLine = cmdLine;
 		this.cmdArray = cmdArray;
 		this.directory = directory;
+		this.environment = environment;
 		this.delimiterIn = delimiterIn;
 		this.delimiterOut = delimiterOut;
 		this.useEnvLineSeparator = useEnvLineSeparator;
@@ -93,11 +97,11 @@ public abstract class CommandPool<I, O> {
 			int num = numCmd.get();
 			// Create new process
 			try {
-				Class<?>[] argType = {String[].class, String.class, String.class, String.class, 
+				Class<?>[] argType = {String[].class, String.class, Map.class, String.class, String.class, 
 						boolean.class, boolean.class, boolean.class, int.class, int.class, int.class, int.class};
 				Constructor<? extends Command<I, O>> constructor;
 				constructor = cmdClass.getConstructor(argType);
-				cmd = constructor.newInstance(exeCmd, directory, delimiterIn, delimiterOut, 
+				cmd = constructor.newInstance(exeCmd, directory, environment, delimiterIn, delimiterOut, 
 						useEnvLineSeparator, delLastNewline,
 						includeDelim, timeOut, startWait, restartWait, bufSize);
 			} catch (InstantiationException | IllegalAccessException

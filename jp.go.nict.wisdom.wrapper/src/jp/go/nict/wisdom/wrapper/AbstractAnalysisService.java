@@ -18,6 +18,7 @@
 package jp.go.nict.wisdom.wrapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import jp.go.nict.langrid.servicecontainer.service.AbstractService;
@@ -37,6 +38,7 @@ public abstract class AbstractAnalysisService extends AbstractService implements
 	protected boolean useEnvLineSeparator = true;
 	protected boolean delLastNewline = false;
 	protected boolean includeDelim = false;
+	protected Map<String, String> environment;
 
 	protected int initPoolSize = 1;
 	protected int timeOut = 60000;
@@ -167,5 +169,13 @@ public abstract class AbstractAnalysisService extends AbstractService implements
 
 	public void setDirectory(String directory) {
 		this.directory = directory;
+	}
+
+	public Map<String, String> getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(Map<String, String> environment) {
+		this.environment = environment;
 	}
 }

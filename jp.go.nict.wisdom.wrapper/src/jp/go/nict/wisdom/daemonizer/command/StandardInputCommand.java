@@ -18,6 +18,7 @@
 package jp.go.nict.wisdom.daemonizer.command;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -35,10 +36,11 @@ public class StandardInputCommand extends DaemonizedStringIOCommand {
 	private boolean delLastNewline = false;
 	private boolean includeDelim = false;
 
-	public StandardInputCommand(String[] cmd, String dir, String delimiterIn, String delimiterOut, 
+	public StandardInputCommand(String[] cmd, String dir, Map<String, String> environment, 
+			String delimiterIn, String delimiterOut,
 			boolean useEnvLineSeparator, boolean delLastNewline, boolean includeDelim, int timeOut, 
 			int startWait, int restartwait, int bufSize) {
-		super(cmd, dir, timeOut, startWait, restartwait, bufSize);
+		super(cmd, dir, environment, timeOut, startWait, restartwait, bufSize);
 		if(delimiterIn != null) {
 			if (useEnvLineSeparator) {
 				this.delimiterIn = delimiterIn.replaceAll("\\\\n", lineSep);

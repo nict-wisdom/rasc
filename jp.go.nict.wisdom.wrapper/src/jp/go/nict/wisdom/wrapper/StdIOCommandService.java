@@ -36,7 +36,8 @@ public class StdIOCommandService extends AbstractTextAnalysisService {
 		if (cmdPoolMap.containsKey(getServiceName())) return;
 		
 		CommandPool<String, String> cmdPool = new CommandPool<String, String>(
-				cmdLine, cmdArray, directory, delimiterIn, delimiterOut, useEnvLineSeparator,
+				cmdLine, cmdArray, directory, environment, 
+				delimiterIn, delimiterOut, useEnvLineSeparator,
 				delLastNewline, includeDelim, timeOut, startWait, restartWait,
 				bufSize, pollTimeOut, poolSize, initPoolSize) {
 					public Command<String, String> getInstance() throws IOException, InterruptedException {

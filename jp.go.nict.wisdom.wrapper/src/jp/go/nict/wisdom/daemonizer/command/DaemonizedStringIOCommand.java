@@ -17,13 +17,17 @@
 
 package jp.go.nict.wisdom.daemonizer.command;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,6 +48,7 @@ public abstract class DaemonizedStringIOCommand implements Command<String, Strin
 
 	private String[] cmd;
 	private String dir;
+	private Map<String, String> environment;
 	private int timeOut;
 	private int startWait;
 	private int restartWait;
@@ -64,9 +69,12 @@ public abstract class DaemonizedStringIOCommand implements Command<String, Strin
 	static {
 	}
 
-	public DaemonizedStringIOCommand(String[] cmd, String dir, int timeOut, int startWait, int restartwait, int bufSize) {
+	public DaemonizedStringIOCommand(String[] cmd, String dir,
+			Map<String, String> environment, 
+			int timeOut, int startWait, int restartwait, int bufSize) {
 		this.cmd = cmd;
 		this.dir = dir;
+		this.environment = environment;
 		this.timeOut = timeOut;
 		this.startWait = startWait;
 		this.restartWait = restartwait;
@@ -92,7 +100,8 @@ public abstract class DaemonizedStringIOCommand implements Command<String, Strin
 				throw new IOException("Timeout occured. The wrapped program may stall or die. Restart failed.");
 			}
 
-			throw new InterruptedException("Timeout occured. The wrapped program may stall or die.");
+			throw new InterruptedException("Timeout occured. The wrapped program may stall, die, or not output the delimiter."
+						+ " Please make sure the delimiter is properly set and the program certainly outputs the delimiter.");
 		}
 
 		return result;
@@ -119,6 +128,14 @@ public abstract class DaemonizedStringIOCommand implements Command<String, Strin
 		if(dir != null){
 			pb.directory(new File(dir));
 		}
+
+		if (environment != null) {
+			Map<String, String> env = pb.environment();
+			for (String k : environment.keySet()) {
+				env.put(k, environment.get(k));
+			}
+		}
+
 		process = pb.start();
 
 		try {
@@ -188,28 +205,43 @@ public abstract class DaemonizedStringIOCommand implements Command<String, Strin
 		int delimLen = getDelimiter().length();
 		String serchStr;
 		StringBuffer buf = new StringBuffer();
-		while (results.isEmpty()) {
-			String retCmd = doGetNextResult();
-			if(buf.length() < delimLen){
-				serchStr = buf + retCmd;
-				useBufLen = buf.length();
-			}else{
-				useBufLen = delimLen;
-				serchStr = buf.substring(buf.length() - delimLen) + retCmd;
-			}
-			buf.append(retCmd);
-
-			if ((indexDelim = serchStr.indexOf(getDelimiter())) >= 0) {
-				int resultLength = buf.length() - retCmd.length();
-				if (includeDelim) {
-					resultLength += indexDelim - useBufLen + getDelimiter().length();
-				} else {
-					resultLength += indexDelim - useBufLen;
+		
+		try {
+			while (results.isEmpty()) {
+				String retCmd = doGetNextResult();
+				if(buf.length() < delimLen){
+					serchStr = buf + retCmd;
+					useBufLen = buf.length();
+				}else{
+					useBufLen = delimLen;
+					serchStr = buf.substring(buf.length() - delimLen) + retCmd;
 				}
-				String retStr = buf.substring(0, resultLength);
-				results.add(retStr);
+				buf.append(retCmd);
+
+				if ((indexDelim = serchStr.indexOf(getDelimiter())) >= 0) {
+					int resultLength = buf.length() - retCmd.length();
+					if (includeDelim) {
+						resultLength += indexDelim - useBufLen + getDelimiter().length();
+					} else {
+						resultLength += indexDelim - useBufLen;
+					}
+					String retStr = buf.substring(0, resultLength);
+					results.add(retStr);
+				}
 			}
+		} catch (InterruptedException e) {
+			String msg = "";
+			if (buf.toString().isEmpty()) {
+				msg = "No result returned from the program. You may need to flush stdout in the wrapped program.";
+			} else {
+				msg = "The output delimiter \"" + getDelimiter() + "\" does not appear in the output from the wrapped program."
+						+ " Output received from the program: \n"
+						+ buf.toString() + "\n";
+			}
+			msg += " Also check stderr by setting log level to finer or finest.";
+			throw new InterruptedException(e.getMessage() + "\n" + msg);
 		}
+		
 		String result = results.getFirst();
 		results.removeFirst();
 		logger.finest("Returning output: " + result);
